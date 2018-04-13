@@ -34,16 +34,12 @@ def estimar_e(indicadora_avaliada):
 
 
 def estimar_e_diretamente(abaixo, total):
-    if abaixo == 0:
-        abaixo = 0.0000001
     r = np.divide(abaixo, total)
     e = np.float_power(2, np.divide(1, r))
     return e
 
 
 def estimar_pi_diretamente(dentro, total):
-    if dentro == 0:
-        dentro = 0.0000001
     r = np.divide(dentro, total)
     pi = np.multiply(r, 4)
     return pi
@@ -81,35 +77,24 @@ def estimar_pi_multi(n_ini, n_fim):
     return ns
 
 
-def plot_e_error(n):
-    es = estimar_e_multi(1, n)
-    # pprint(es)
-    print(es[-1], " - ", round(math.fabs(es[-1] - math.e) / math.e, 8))
-    es = [np.divide(math.fabs(e - math.e), math.e) for e in es]
-    se = [1 / math.sqrt(i) for i in range(1, n)]
-    plt.loglog(es)  # , basex=2, basey=2)
-    plt.loglog(se)  # , basex=2, basey=2)
-    plt.show()
-
-
 def plot_e(n):
     es = estimar_e_multi(1, n)
     # pprint(es)
     print(es[-1], " - ", round(math.fabs(es[-1] - math.e) / math.e, 8))
-    se = [math.e for i in range(1, n)]
-    plt.loglog(es)  # , basex=2, basey=2)
-    plt.loglog(se)  # , basex=2, basey=2)
-    plt.show()
+    er = [np.divide(math.fabs(e - math.e), math.e) for e in es]
 
+    plt.subplot(211)
+    plt.loglog(er)  # , basex=2, basey=2)
+    plt.loglog([1 / math.sqrt(i) for i in range(1, n)])  # , basex=2, basey=2)
+    plt.grid(True)
+    plt.title('loglog e relative error')
 
-def plot_pi_error(n):
-    es = estimar_pi_multi(1, n)
-    # pprint(es)
-    print(es[-1], " - ", round(math.fabs(es[-1] - math.pi) / math.pi, 8))
-    es = [np.divide(math.fabs(e - math.pi), math.pi) for e in es]
-    se = [1 / math.sqrt(i) for i in range(1, n)]
-    plt.loglog(es)  # , basex=2, basey=2)
-    plt.loglog(se)  # , basex=2, basey=2)
+    plt.subplot(212)
+    plt.semilogx(es)  # , basex=2, basey=2)
+    plt.semilogx([math.e for i in range(1, n)])  # , basex=2, basey=2)
+    plt.grid(True)
+    plt.title('semilogx e value')
+
     plt.show()
 
 
@@ -117,9 +102,20 @@ def plot_pi(n):
     es = estimar_pi_multi(1, n)
     # pprint(es)
     print(es[-1], " - ", round(math.fabs(es[-1] - math.pi) / math.pi, 8))
-    se = [math.pi for i in range(1, n)]
-    plt.loglog(es)  # , basex=2, basey=2)
-    plt.loglog(se)  # , basex=2, basey=2)
+    er = [np.divide(math.fabs(e - math.pi), math.pi) for e in es]
+
+    plt.subplot(211)
+    plt.loglog(er)  # , basex=2, basey=2)
+    plt.loglog([1 / math.sqrt(i) for i in range(1, n)])  # , basex=2, basey=2)
+    plt.grid(True)
+    plt.title('loglog pi relative error')
+
+    plt.subplot(212)
+    plt.semilogx(es)  # , basex=2, basey=2)
+    plt.semilogx([math.pi for i in range(1, n)])  # , basex=2, basey=2)
+    plt.grid(True)
+    plt.title('semilogx pi value')
+
     plt.show()
 
 
@@ -128,27 +124,17 @@ if __name__ == '__main__':
 
     if len(sys.argv) == 1:
         n = 10**6
-        plot_e_error(n)
+        plot_e(n)
 
-    elif sys.argv[2] == 'e':
-        ex = int(sys.argv[3])
+    elif sys.argv[1] == 'e':
+        ex = int(sys.argv[2])
         n = 10**ex
-        if sys.argv[1] == '-e':
-            plot_e_error(n)
-        elif sys.argv[1] == '-v':
-            plot_e(n)
-        else:
-            print("Inexistent option.")
+        plot_e(n)
 
-    elif sys.argv[2] == 'pi':
-        ex = int(sys.argv[3])
+    elif sys.argv[1] == 'pi':
+        ex = int(sys.argv[2])
         n = 10**ex
-        if sys.argv[1] == '-e':
-            plot_pi_error(n)
-        elif sys.argv[1] == '-v':
-            plot_pi(n)
-        else:
-            print("Inexistent option.")
+        plot_pi(n)
 
     else:
         print("Inexistent option.")
