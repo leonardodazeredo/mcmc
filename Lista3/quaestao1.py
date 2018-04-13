@@ -35,17 +35,17 @@ def estimar_e(indicadora_avaliada):
 
 def estimar_e_diretamente(abaixo, total):
     if abaixo == 0:
-        abaixo = 0.01
-    r = round(abaixo / total, 8)
-    e = round(2**(1 / r), 8)
+        abaixo = 0.0000001
+    r = np.divide(abaixo, total)
+    e = np.float_power(2, np.divide(1, r))
     return e
 
 
 def estimar_pi_diretamente(dentro, total):
     if dentro == 0:
-        dentro = 0.000001
-    r = round(dentro / total, 8)
-    pi = round(4 * r, 8)
+        dentro = 0.0000001
+    r = np.divide(dentro, total)
+    pi = np.multiply(r, 4)
     return pi
 
 
@@ -83,8 +83,9 @@ def estimar_pi_multi(n_ini, n_fim):
 
 def plot_e_error(n):
     es = estimar_e_multi(1, n)
+    # pprint(es)
     print(es[-1], " - ", round(math.fabs(es[-1] - math.e) / math.e, 8))
-    es = [round(math.fabs(e - math.e) / math.e, 8) for e in es]
+    es = [np.divide(math.fabs(e - math.e), math.e) for e in es]
     se = [1 / math.sqrt(i) for i in range(1, n)]
     plt.loglog(es)  # , basex=2, basey=2)
     plt.loglog(se)  # , basex=2, basey=2)
@@ -93,8 +94,8 @@ def plot_e_error(n):
 
 def plot_e(n):
     es = estimar_e_multi(1, n)
+    # pprint(es)
     print(es[-1], " - ", round(math.fabs(es[-1] - math.e) / math.e, 8))
-    # es = [round(math.fabs(e - math.e) / math.e, 8) for e in es]
     se = [math.e for i in range(1, n)]
     plt.loglog(es)  # , basex=2, basey=2)
     plt.loglog(se)  # , basex=2, basey=2)
@@ -103,8 +104,9 @@ def plot_e(n):
 
 def plot_pi_error(n):
     es = estimar_pi_multi(1, n)
+    # pprint(es)
     print(es[-1], " - ", round(math.fabs(es[-1] - math.pi) / math.pi, 8))
-    es = [round(math.fabs(e - math.pi) / math.pi, 8) for e in es]
+    es = [np.divide(math.fabs(e - math.pi), math.pi) for e in es]
     se = [1 / math.sqrt(i) for i in range(1, n)]
     plt.loglog(es)  # , basex=2, basey=2)
     plt.loglog(se)  # , basex=2, basey=2)
@@ -113,8 +115,8 @@ def plot_pi_error(n):
 
 def plot_pi(n):
     es = estimar_pi_multi(1, n)
+    # pprint(es)
     print(es[-1], " - ", round(math.fabs(es[-1] - math.pi) / math.pi, 8))
-    # es = [round(math.fabs(e - math.pi) / math.pi, 8) for e in es]
     se = [math.pi for i in range(1, n)]
     plt.loglog(es)  # , basex=2, basey=2)
     plt.loglog(se)  # , basex=2, basey=2)
