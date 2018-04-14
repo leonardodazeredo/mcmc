@@ -7,15 +7,13 @@ import matplotlib.pyplot as plt
 def gerar_pontos_e(n):
     xs = np.random.uniform(1, 2, n)
     ys = np.random.uniform(0, 1, n)
-    p = zip(xs, ys)
-    return list(p)
+    return list(zip(xs, ys))
 
 
 def gerar_pontos_pi(n):
     xs = np.random.uniform(-1, 1, n)
     ys = np.random.uniform(-1, 1, n)
-    p = zip(xs, ys)
-    return list(p)
+    return list(zip(xs, ys))
 
 
 def avaliar_indicadora_e(pontos):
@@ -45,7 +43,7 @@ def estimar_pi_diretamente(dentro, total):
     return pi
 
 
-def f(l):
+def contagem_cumulativa_da_indicadora_por_n(l):
     l2 = list()
     k = 0
     for e in l:
@@ -58,22 +56,16 @@ def f(l):
 def estimar_e_multi(n_ini, n_fim):
     ps = gerar_pontos_e(n_fim)
     ia = avaliar_indicadora_e(ps)
-
-    ns = f(ia)
-
+    ns = contagem_cumulativa_da_indicadora_por_n(ia)
     ns = [estimar_e_diretamente(ns[n - 1], n) for n in range(n_ini, n_fim)]
-
     return ns
 
 
 def estimar_pi_multi(n_ini, n_fim):
     ps = gerar_pontos_pi(n_fim - n_ini)
     ia = avaliar_indicadora_pi(ps)
-
-    ns = f(ia)
-
+    ns = contagem_cumulativa_da_indicadora_por_n(ia)
     ns = [estimar_pi_diretamente(ns[idx], n_ini + idx) for idx in range(0, len(ns))]
-
     return ns
 
 
@@ -90,10 +82,10 @@ def plot_e(n):
     plt.title('loglog e relative error')
 
     plt.subplot(212)
-    plt.semilogx(es)  # , basex=2, basey=2)
-    plt.semilogx([math.e for i in range(1, n)])  # , basex=2, basey=2)
+    plt.loglog(es)  # , basex=2, basey=2)
+    plt.loglog([math.e for i in range(1, n)])  # , basex=2, basey=2)
     plt.grid(True)
-    plt.title('semilogx e value')
+    plt.title('loglog e value')
 
     plt.show()
 
@@ -111,10 +103,10 @@ def plot_pi(n):
     plt.title('loglog pi relative error')
 
     plt.subplot(212)
-    plt.semilogx(es)  # , basex=2, basey=2)
-    plt.semilogx([math.pi for i in range(1, n)])  # , basex=2, basey=2)
+    plt.loglog(es)  # , basex=2, basey=2)
+    plt.loglog([math.pi for i in range(1, n)])  # , basex=2, basey=2)
     plt.grid(True)
-    plt.title('semilogx pi value')
+    plt.title('loglog pi value')
 
     plt.show()
 
