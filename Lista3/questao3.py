@@ -79,7 +79,14 @@ def card_D(k):
 
 def fazer_e_salvar_amostra(n_ex=5, k=4):
     n = 10**n_ex
-    ps = [gerar_url(k) for i in range(0, n)]
+    k_arr = [k for i in range(0, n)]
+    inicio = datetime.now()
+    print("Gerando URLs.")
+    import multiprocessing
+    pool = multiprocessing.Pool()
+    ps = pool.map(gerar_url, k_arr)
+    pool.close()
+    print("URLs gerandas.", "Tempo:", (datetime.now() - inicio))
     np.savez_compressed(file_name(k), amostra=ps)
 
 
