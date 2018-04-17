@@ -32,7 +32,7 @@ def avaliar_indicadora(ss):
     inicio = datetime.now()
     print("Avaliando URLs.")
     import multiprocessing.dummy
-    pool = multiprocessing.dummy.Pool(processes=100)
+    pool = multiprocessing.dummy.Pool(processes=2000)
     i = pool.map(checkUrl, ss)
     pool.close()
     print("URLs avaliadas.", "Tempo:", (datetime.now() - inicio))
@@ -77,30 +77,32 @@ def card_D(k):
     return c
 
 
-def fazer_e_salvar_amostra(n_ex, k=4):
+def fazer_e_salvar_amostra(n_ex=5, k=4):
     n = 10**n_ex
     ps = [gerar_url(k) for i in range(0, n)]
-    ia = avaliar_indicadora(ps)
-    np.save(open(file_name(k, n_ex), "wb"), ia)
+    np.savez_compressed(file_name(k), amostra=ps)
 
 
-def file_name(k, n_ex):
-    return "k_{}_n_ex_{}".format(k, n_ex)
+def avaliar_e_salvar_amostra(k=4):
+    ps = np.load(file_name(k) + ".npz")
+    ia = avaliar_indicadora(ps['amostra'])
+    np.savez_compressed(file_name(k) + "_eval", amostra_eval=ia)
 
 
-def plot(n_ex=6, k=4):
+def file_name(k):
+    return "k_{}".format(k)
+
+
+def plot(k=4):
     import os.path
-    if not os.path.isfile(file_name(k, n_ex)):
-        fazer_e_salvar_amostra(n_ex=n_ex, k=k)
+    if not os.path.isfile(file_name(k) + "_eval.npz"):
+        fazer_e_salvar_amostra(k=k)
 
-    ia = np.load(open(file_name(k, n_ex), "rb"))
+    ia = np.load(file_name(k) + "_eval.npz")
 
-    es = estimar_multi(ia=ia)
+    es = estimar_multi(ia=ia['amostra_eval'])
     es = np.multiply(es, card_D(k=k))
-    # pprint([e for e in es if e])
-    # plt.yticks(np.arange(-50, 1500, 50))
     plt.semilogx(es)
-    # plt.plot(es)
     plt.grid(True)
 
     plt.show()
@@ -112,15 +114,18 @@ if __name__ == '__main__':
     if len(sys.argv) == 1:
         print("Incorrect use.")
 
-    elif sys.argv[1] == '-save':
+    elif sys.argv[1] == '-save-amostra':
         k = int(sys.argv[2])
         ex = int(sys.argv[3])
         fazer_e_salvar_amostra(ex, k=k)
 
+    elif sys.argv[1] == '-eval-amostra':
+        k = int(sys.argv[2])
+        avaliar_e_salvar_amostra(k=k)
+
     elif sys.argv[1] == '-plot':
         k = int(sys.argv[2])
-        ex = int(sys.argv[3])
-        plot(n_ex=ex, k=k)
+        plot(k=k)
 
     else:
         print("Inexistent option.")
