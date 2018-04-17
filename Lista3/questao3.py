@@ -103,7 +103,9 @@ def plot(n_ex=6, k=4):
     es = estimar_multi(ia=ia)
     es = np.multiply(es, card_D(k=k))
     # pprint([e for e in es if e])
-    plt.plot(es)
+    plt.yticks(np.arange(-50, 1500, 50))
+    plt.semilogx(es)
+    # plt.plot(es)
     plt.grid(True)
 
     plt.show()
