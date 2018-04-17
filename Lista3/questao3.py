@@ -3,6 +3,7 @@ import urllib.parse as urlparse
 import numpy as np
 from pprint import pprint
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 
 def checkUrl(url):
@@ -11,22 +12,20 @@ def checkUrl(url):
         conn = httplib2.HTTPConnectionWithTimeout(p.netloc)
         conn.request('HEAD', p.path)
         resp = conn.getresponse()
-        # print('O')
         return resp.status < 400
 
     except Exception:
-        # print('X')
         return False
 
 
-a = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+letras = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
 
 def gerar_string(k):
-    global a
+    global letras
     ks = list(range(k, 0, -1))
     k = np.random.choice(ks, 1)
-    s = np.random.choice(a, k)
+    s = np.random.choice(letras, k)
     return ''.join(s)
 
 
@@ -35,12 +34,13 @@ def gerar_url(k):
 
 
 def avaliar_indicadora(ss):
+    inicio = datetime.now()
     print("Avaliando URLs.")
     import multiprocessing.dummy
     pool = multiprocessing.dummy.Pool(processes=5000)
     i = pool.map(checkUrl, ss)
     pool.close()
-    print("URLs avaliadas.")
+    print("URLs avaliadas.", "Tempo:", (datetime.now() - inicio))
     return i
 
 
@@ -64,11 +64,11 @@ def contagem_cumulativa_da_indicadora_por_n(l):
     return l2
 
 
-def estimar_multi(n_ini, n_fim, k):
-    ps = [gerar_url(k) for i in range(n_ini, n_fim)]
-    # pprint(ps)
-    ia = avaliar_indicadora(ps)
-    # pprint([e for e in ia if e])
+def estimar_multi(n_ini=1, n_fim=None, ia=None):
+    if ia is None:
+        raise ValueError('Ia none.')
+    if n_fim is None:
+        n_fim = len(ia)
     ns = contagem_cumulativa_da_indicadora_por_n(ia)
     ns = [estimar_diretamente(ns[n - 1], n) for n in range(n_ini, n_fim)]
     return ns
@@ -77,13 +77,26 @@ def estimar_multi(n_ini, n_fim, k):
 def card_D(k):
     c = 0
     for ki in range(k, 0, -1):
-        c += 26**ki
+        c += len(letras)**ki
     print("Cardinalidade de Dk:", c)
     return c
 
 
-def plot(n, k=4):
-    es = estimar_multi(1, n, k=k)
+def fazer_e_salvar_amostra(n_ex, k=4):
+    n = 10**n_ex
+    ps = [gerar_url(k) for i in range(0, n)]
+    ia = avaliar_indicadora(ps)
+    np.save(open("k_{}_n_ex_{}".format(k, n_ex), "wb"), ia)
+
+
+def plot(n_ex=6, k=4):
+    import os.path
+    if not os.path.isfile("k_{}_n_ex_{}".format(k, n_ex)):
+        fazer_e_salvar_amostra(n_ex=n_ex, k=k)
+
+    ia = np.load(open("k_{}_n_ex_{}".format(k, n_ex), "rb"))
+
+    es = estimar_multi(ia=ia)
     es = np.multiply(es, card_D(k=k))
     # pprint([e for e in es if e])
     plt.plot(es)
@@ -93,4 +106,20 @@ def plot(n, k=4):
 
 
 if __name__ == '__main__':
-    plot(10**4)
+    import sys
+
+    if len(sys.argv) == 1:
+        print("Incorrect use.")
+
+    elif sys.argv[1] == '-save':
+        k = int(sys.argv[2])
+        ex = int(sys.argv[3])
+        fazer_e_salvar_amostra(ex, k=k)
+
+    elif sys.argv[1] == '-plot':
+        k = int(sys.argv[2])
+        ex = int(sys.argv[3])
+        plot(n_ex=ex, k=k)
+
+    else:
+        print("Inexistent option.")
