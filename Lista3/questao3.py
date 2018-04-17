@@ -9,7 +9,8 @@ def checkUrl(url):
     try:
         socket.gethostbyname(url.strip())
         return True
-    except socket.gaierror:
+    # except socket.gaierror:
+    except Exception:
         return False
 
 
@@ -32,7 +33,7 @@ def avaliar_indicadora(ss):
     inicio = datetime.now()
     print("Avaliando URLs.")
     import multiprocessing.dummy
-    pool = multiprocessing.dummy.Pool(processes=2000)
+    pool = multiprocessing.dummy.Pool(processes=1500)
     i = pool.map(checkUrl, ss)
     pool.close()
     print("URLs avaliadas.", "Tempo:", (datetime.now() - inicio))
