@@ -86,15 +86,19 @@ def fazer_e_salvar_amostra(n_ex, k=4):
     n = 10**n_ex
     ps = [gerar_url(k) for i in range(0, n)]
     ia = avaliar_indicadora(ps)
-    np.save(open("k_{}_n_ex_{}".format(k, n_ex), "wb"), ia)
+    np.save(open(file_name(k, n_ex), "wb"), ia)
+
+
+def file_name(k, n_ex):
+    return "k_{}_n_ex_{}".format(k, n_ex)
 
 
 def plot(n_ex=6, k=4):
     import os.path
-    if not os.path.isfile("k_{}_n_ex_{}".format(k, n_ex)):
+    if not os.path.isfile(file_name(k, n_ex)):
         fazer_e_salvar_amostra(n_ex=n_ex, k=k)
 
-    ia = np.load(open("k_{}_n_ex_{}".format(k, n_ex), "rb"))
+    ia = np.load(open(file_name(k, n_ex), "rb"))
 
     es = estimar_multi(ia=ia)
     es = np.multiply(es, card_D(k=k))
