@@ -1,5 +1,3 @@
-import httplib2
-import urllib.parse as urlparse
 import numpy as np
 from pprint import pprint
 import matplotlib.pyplot as plt
@@ -7,14 +5,11 @@ from datetime import datetime
 
 
 def checkUrl(url):
-    p = urlparse.urlparse(url)
+    import socket
     try:
-        conn = httplib2.HTTPConnectionWithTimeout(p.netloc)
-        conn.request('HEAD', p.path)
-        resp = conn.getresponse()
-        return resp.status < 400
-
-    except Exception:
+        socket.gethostbyname(url.strip())
+        return True
+    except socket.gaierror:
         return False
 
 
@@ -30,14 +25,14 @@ def gerar_string(k):
 
 
 def gerar_url(k):
-    return "http://www." + gerar_string(k) + ".ufrj.br/"
+    return "www." + gerar_string(k) + ".ufrj.br"
 
 
 def avaliar_indicadora(ss):
     inicio = datetime.now()
     print("Avaliando URLs.")
     import multiprocessing.dummy
-    pool = multiprocessing.dummy.Pool(processes=5000)
+    pool = multiprocessing.dummy.Pool(processes=100)
     i = pool.map(checkUrl, ss)
     pool.close()
     print("URLs avaliadas.", "Tempo:", (datetime.now() - inicio))
@@ -103,7 +98,7 @@ def plot(n_ex=6, k=4):
     es = estimar_multi(ia=ia)
     es = np.multiply(es, card_D(k=k))
     # pprint([e for e in es if e])
-    plt.yticks(np.arange(-50, 1500, 50))
+    # plt.yticks(np.arange(-50, 1500, 50))
     plt.semilogx(es)
     # plt.plot(es)
     plt.grid(True)
