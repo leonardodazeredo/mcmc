@@ -82,7 +82,7 @@ def card_D(k):
     return c
 
 
-def fazer_e_salvar_amostra(n_ex=5, k=4):
+def fazer_e_salvar_amostra(n_ex=5, k=4, sufixo=""):
     n = 10**n_ex
     k_arr = [k for i in range(0, n)]
     inicio = datetime.now()
@@ -95,7 +95,7 @@ def fazer_e_salvar_amostra(n_ex=5, k=4):
     pool.close()
     pool.join()
     print("URLs gerandas.", "Tempo:", (datetime.now() - inicio))
-    file_name = file_name_amostra(k, n_ex)
+    file_name = file_name_amostra(k, n_ex) + "_" + sufixo
     np.savez_compressed(file_name, amostra=ps)
     return k, n_ex, file_name
 
@@ -108,7 +108,7 @@ def avaliar_e_salvar_indicadora(file_name=None):
     print("n =", n)
     ia = avaliar_indicadora(ps['amostra'])
     n_ex = str(n).count('0')
-    file_name = file_name_indicadora(k, n_ex)
+    file_name = file_name_indicadora(file_name_amostra=file_name)
     np.savez_compressed(file_name, amostra_eval=ia)
     return k, n_ex, file_name
 
@@ -162,15 +162,16 @@ if __name__ == '__main__':
     if len(sys.argv) == 1:
         print("Incorrect use.")
 
-    elif sys.argv[1] == '-save-amostra':
+    elif sys.argv[1] == '-amostrar':
         k = int(sys.argv[2])
         ex = int(sys.argv[3])
-        fazer_e_salvar_amostra(n_ex=ex, k=k)
+        su = sys.argv[4]
+        fazer_e_salvar_amostra(n_ex=ex, k=k, sufixo=su)
 
-    elif sys.argv[1] == '-eval-amostra':
+    elif sys.argv[1] == '-avaliar':
         avaliar_e_salvar_indicadora(file_name=sys.argv[2])
 
-    elif sys.argv[1] == '-plot':
+    elif sys.argv[1] == '-plotar':
         plot(file_name=sys.argv[2])
 
     else:
