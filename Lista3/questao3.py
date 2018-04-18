@@ -2,6 +2,7 @@ import numpy as np
 from pprint import pprint
 import matplotlib.pyplot as plt
 from datetime import datetime
+import tqdm
 
 
 def checkUrl(url):
@@ -9,12 +10,12 @@ def checkUrl(url):
     try:
         socket.gethostbyname(url.strip())
         return True
-    # except socket.gaierror:
-    except Exception:
+    except socket.gaierror:
         return False
 
 
-letras = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+letras = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+                                        'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
 
 def gerar_string(k):
@@ -33,9 +34,12 @@ def avaliar_indicadora(ss):
     inicio = datetime.now()
     print("Avaliando URLs.")
     import multiprocessing.dummy
-    pool = multiprocessing.dummy.Pool(processes=1500)
-    i = pool.map(checkUrl, ss)
+    pool = multiprocessing.dummy.Pool(processes=300)
+    i = list()
+    for r in tqdm.tqdm(pool.imap_unordered(checkUrl, ss), total=len(ss)):
+        i.append(r)
     pool.close()
+    pool.join()
     print("URLs avaliadas.", "Tempo:", (datetime.now() - inicio))
     return i
 
@@ -85,14 +89,18 @@ def fazer_e_salvar_amostra(n_ex=5, k=4):
     print("Gerando URLs.")
     import multiprocessing
     pool = multiprocessing.Pool()
-    ps = pool.map(gerar_url, k_arr)
+    ps = list()
+    for r in tqdm.tqdm(pool.imap_unordered(gerar_url, k_arr), total=len(k_arr)):
+        ps.append(r)
     pool.close()
+    pool.join()
     print("URLs gerandas.", "Tempo:", (datetime.now() - inicio))
     np.savez_compressed(file_name(k), amostra=ps)
 
 
 def avaliar_e_salvar_amostra(k=4):
     ps = np.load(file_name(k) + ".npz")
+    print("n =", len(ps['amostra']))
     ia = avaliar_indicadora(ps['amostra'])
     np.savez_compressed(file_name(k) + "_eval", amostra_eval=ia)
 
@@ -107,6 +115,7 @@ def plot(k=4):
         fazer_e_salvar_amostra(k=k)
 
     ia = np.load(file_name(k) + "_eval.npz")
+    print("n =", len(ia['amostra_eval']))
 
     es = estimar_multi(ia=ia['amostra_eval'])
     es = np.multiply(es, card_D(k=k))
