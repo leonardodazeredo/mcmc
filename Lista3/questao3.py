@@ -34,7 +34,7 @@ def avaliar_indicadora(ss):
     inicio = datetime.now()
     print("Avaliando URLs.")
     import multiprocessing.dummy
-    pool = multiprocessing.dummy.Pool(processes=100)
+    pool = multiprocessing.dummy.Pool(processes=200)
     i = list()
     for r in tqdm.tqdm(pool.imap_unordered(checkUrl, ss), total=len(ss)):
         i.append(r)
@@ -95,27 +95,58 @@ def fazer_e_salvar_amostra(n_ex=5, k=4):
     pool.close()
     pool.join()
     print("URLs gerandas.", "Tempo:", (datetime.now() - inicio))
-    np.savez_compressed(file_name(k), amostra=ps)
+    file_name = file_name_amostra(k, n_ex)
+    np.savez_compressed(file_name, amostra=ps)
+    return k, n_ex, file_name
 
 
-def avaliar_e_salvar_amostra(k=4):
-    ps = np.load(file_name(k) + ".npz")
-    print("n =", len(ps['amostra']))
+def avaliar_e_salvar_indicadora(file_name=None):
+    if file_name is None:
+        raise ValueError('File_name none.')
+    ps = np.load(file_name)
+    n, k = get_n(ps), get_k(file_name)
+    print("n =", n)
     ia = avaliar_indicadora(ps['amostra'])
-    np.savez_compressed(file_name(k) + "_eval", amostra_eval=ia)
+    n_ex = str(n).count('0')
+    file_name = file_name_indicadora(k, n_ex)
+    np.savez_compressed(file_name, amostra_eval=ia)
+    return k, n_ex, file_name
 
 
-def file_name(k):
-    return "k_{}".format(k)
+def file_name_amostra(k, n_ex):
+    return "k_{}_n_ex_{}".format(k, n_ex)
 
 
-def plot(k=4):
-    import os.path
-    if not os.path.isfile(file_name(k) + "_eval.npz"):
-        fazer_e_salvar_amostra(k=k)
+def file_name_indicadora(k=None, n_ex=None, file_name_amostra=None):
+    if file_name_amostra is None:
+        return "k_{}_n_ex_{}_eval".format(k, n_ex)
+    else:
+        return file_name_amostra.replace(".npz", "_eval")
 
-    ia = np.load(file_name(k) + "_eval.npz")
-    print("n =", len(ia['amostra_eval']))
+
+def get_n(arrs):
+    return len(arrs['amostra'])
+
+
+def get_k(file_name):
+    return int(file_name[file_name.index("k_") + 2])
+
+
+def plot(file_name=None):
+    import os
+    if file_name is None:
+        raise ValueError('File_name none.')
+    if not os.path.isfile(file_name):
+        raise ValueError('File não existe.')
+    if not os.path.isfile(file_name_indicadora(file_name_amostra=file_name) + ".npz"):
+        avaliar_e_salvar_indicadora(file_name)
+
+    ps = np.load(file_name)
+    n, k = get_n(ps), get_k(file_name)
+    del ps
+
+    ia = np.load(file_name_indicadora(file_name_amostra=file_name) + ".npz")
+    pprint((n, k))
 
     es = estimar_multi(ia=ia['amostra_eval'])
     es = np.multiply(es, card_D(k=k))
@@ -134,15 +165,13 @@ if __name__ == '__main__':
     elif sys.argv[1] == '-save-amostra':
         k = int(sys.argv[2])
         ex = int(sys.argv[3])
-        fazer_e_salvar_amostra(ex, k=k)
+        fazer_e_salvar_amostra(n_ex=ex, k=k)
 
     elif sys.argv[1] == '-eval-amostra':
-        k = int(sys.argv[2])
-        avaliar_e_salvar_amostra(k=k)
+        avaliar_e_salvar_indicadora(file_name=sys.argv[2])
 
     elif sys.argv[1] == '-plot':
-        k = int(sys.argv[2])
-        plot(k=k)
+        plot(file_name=sys.argv[2])
 
     else:
         print("Inexistent option.")
