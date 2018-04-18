@@ -34,7 +34,7 @@ def avaliar_indicadora(ss):
     inicio = datetime.now()
     print("Avaliando URLs.")
     import multiprocessing.dummy
-    pool = multiprocessing.dummy.Pool(processes=300)
+    pool = multiprocessing.dummy.Pool(processes=100)
     i = list()
     for r in tqdm.tqdm(pool.imap_unordered(checkUrl, ss), total=len(ss)):
         i.append(r)
