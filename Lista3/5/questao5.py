@@ -11,6 +11,7 @@ def G(i):
 
 
 def Z(i):
+    # return math.pow(i, 1 / math.e)
     return i
 
 
@@ -47,12 +48,15 @@ def M2(H):
 
 
 def gerar_i(n):
-    arr = [(Z(i), i) for i in range(1, 1001)]
-    iarr = list()
-    for v, i in arr:
-        for _ in range(0, v):
-            iarr.append(i)
-    return np.random.choice(iarr, n)
+    # arr = [(Z(i), i) for i in range(1, 1001)]
+    # iarr = list()
+    # for v, i in arr:
+    #     for _ in range(0, v):
+    #         iarr.append(i)
+    # return np.random.choice(iarr, n)
+    arr = [i for i in range(1, 1001)]
+    iarr = [H(i) for i in arr]
+    return np.random.choice(arr, n, p=iarr)
 
 
 def Mn(amostra):
