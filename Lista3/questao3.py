@@ -44,9 +44,9 @@ def avaliar_indicadora(ss):
     return i
 
 
-def estimar_e(indicadora_avaliada):
-    abaixo = len([e for e in indicadora_avaliada if e])
-    return estimar_diretamente(abaixo, len(indicadora_avaliada))
+def prob_indicadora(indicadora_avaliada):
+    trues = [e for e in indicadora_avaliada if e]
+    return estimar_diretamente(len(trues), len(indicadora_avaliada))
 
 
 def estimar_diretamente(abaixo, total):
@@ -156,6 +156,32 @@ def plot(file_name=None):
     plt.show()
 
 
+def gerar_todas_strigs(k=4):
+    import itertools
+    global letras
+    sl = list()
+    for ki in range(k, 0, -1):
+        for item in itertools.product(letras, repeat=ki):
+            sl.append("".join(item))
+    return sl
+
+
+def gerar_e_salvar_todas(k=4):
+    inicio = datetime.now()
+    print("Gerando URLs.")
+    ps = gerar_todas_strigs(k=k)
+    print("URLs gerandas.", "Tempo:", (datetime.now() - inicio))
+    file_name = "k_{}_todas".format(k)
+    np.savez_compressed(file_name, amostra=ps)
+    return k, file_name
+
+
+def calcular_p(file_name=None):
+    ia = np.load(file_name_indicadora(file_name_amostra=file_name) + ".npz")
+    p = prob_indicadora(ia['amostra_eval'])
+    return p
+
+
 if __name__ == '__main__':
     import sys
 
@@ -173,6 +199,12 @@ if __name__ == '__main__':
 
     elif sys.argv[1] == '-plotar':
         plot(file_name=sys.argv[2])
+
+    elif sys.argv[1] == '-p':
+        # pprint(gerar_todas_strigs(4))
+        # pprint(calcular_p(4))
+        # gerar_e_salvar_todas(4)
+        calcular_p(file_name=sys.argv[2])
 
     else:
         print("Inexistent option.")
