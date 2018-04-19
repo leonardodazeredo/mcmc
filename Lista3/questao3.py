@@ -3,6 +3,7 @@ from pprint import pprint
 import matplotlib.pyplot as plt
 from datetime import datetime
 import tqdm
+import random
 
 
 def checkUrl(url):
@@ -18,16 +19,21 @@ letras = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 
                                         'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
 
-def gerar_string(k):
-    global letras
-    ks = list(range(k, 0, -1))
-    k = np.random.choice(ks, 1)
-    s = np.random.choice(letras, k)
-    return ''.join(s)
+todas_urls = None
 
 
 def gerar_url(k):
-    return url_template(gerar_string(k))
+    global todas_urls
+    if todas_urls is None:
+        todas_urls = gerar_todas_strigs(k)
+    return random.choice(todas_urls)
+
+# def gerar_url(k):
+#     global letras
+#     ks = list(range(k, 0, -1))
+#     k = random.choice(ks)
+#     s = random.choice(letras, k)
+#     return ''.join(s)
 
 
 def url_template(s):
@@ -64,6 +70,7 @@ def contagem_cumulativa_da_indicadora_por_n(l):
     l2 = list()
     k = 0
     for e in l:
+        # if e[0] == 'True':
         if e:
             k = k + 1
         l2.append(k)
@@ -89,6 +96,10 @@ def card_D(k):
 
 
 def fazer_e_salvar_amostra(n_ex=5, k=4, sufixo=""):
+    global todas_urls
+    if todas_urls is None:
+        todas_urls = gerar_todas_strigs(k)
+
     n = 10**n_ex
     k_arr = [k for i in range(0, n)]
     inicio = datetime.now()
@@ -98,11 +109,16 @@ def fazer_e_salvar_amostra(n_ex=5, k=4, sufixo=""):
         ps.append(r)
     print("URLs gerandas.", "Tempo:", (datetime.now() - inicio))
     file_name = file_name_amostra(k, n_ex) + "_" + sufixo
+    print(ps[0:5], len(ps))
     np.savez_compressed(file_name, amostra=ps)
     return k, n_ex, file_name
 
 
 # def fazer_e_salvar_amostra(n_ex=5, k=4, sufixo=""):
+#     global todas_urls
+#     if todas_urls is None:
+#         todas_urls = gerar_todas_strigs(k)
+#
 #     n = 10**n_ex
 #     k_arr = [k for i in range(0, n)]
 #     inicio = datetime.now()
@@ -180,6 +196,7 @@ def plot(file_name=None):
 def gerar_todas_strigs(k=4):
     import itertools
     global letras
+    print("Gerando lista de URLs.")
     sl = list()
     for ki in range(k, 0, -1):
         for item in itertools.product(letras, repeat=ki):
@@ -191,7 +208,7 @@ def gerar_e_salvar_todas(k=4):
     inicio = datetime.now()
     print("Gerando URLs.")
     ps = gerar_todas_strigs(k=k)
-    # pprint(ps)
+    pprint(ps[0:10])
     print("URLs gerandas.", "Tempo:", (datetime.now() - inicio))
     file_name = "k_{}_todas".format(k)
     np.savez_compressed(file_name, amostra=ps)
@@ -210,9 +227,10 @@ def calcular_p(file_name=None):
 
 def aux(file_name):
     ia = np.load(file_name_indicadora(file_name_amostra=file_name) + ".npz")
-    for e in ia['amostra_eval']:
+    for e in ia['amostra_eval'][0:20]:
         if e[0] == 'True':
             pprint(e)
+    print(len(ia['amostra_eval']))
 
 
 if __name__ == '__main__':
@@ -223,8 +241,8 @@ if __name__ == '__main__':
         # pprint(calcular_p(4))
         # a = gerar_e_salvar_todas(4)
         # avaliar_e_salvar_indicadora(file_name=sys.argv[1])
+        aux(file_name=sys.argv[1])
         calcular_p(file_name=sys.argv[1])
-        # aux(file_name=sys.argv[1])
 
     elif sys.argv[1] == '-amostrar':
         k = int(sys.argv[2])
