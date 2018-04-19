@@ -50,7 +50,8 @@ def avaliar_indicadora(ss):
 
 def prob_indicadora(indicadora_avaliada):
     trues = [e for e in indicadora_avaliada if e]
-    pprint(trues)
+    print("Válidos =", len(trues))
+    print(len(trues), len(indicadora_avaliada))
     return estimar_diretamente(len(trues), len(indicadora_avaliada))
 
 
@@ -185,8 +186,11 @@ def gerar_e_salvar_todas(k=4):
 
 def calcular_p(file_name=None):
     ia = np.load(file_name_indicadora(file_name_amostra=file_name) + ".npz")
-    print(ia['amostra_eval'], len(ia['amostra_eval']))
+    print("N =", len(ia['amostra_eval']))
     p = prob_indicadora(ia['amostra_eval'])
+    print("mi =", len(ia['amostra_eval']) * p * (1 - p))
+    print("Var =", len(ia['amostra_eval']) * p)
+    print("p =", p)
     return p
 
 
@@ -212,8 +216,8 @@ if __name__ == '__main__':
         # pprint(gerar_todas_strigs(4))
         # pprint(calcular_p(4))
         # a = gerar_e_salvar_todas(4)
-        avaliar_e_salvar_indicadora(file_name=sys.argv[2])
-        pprint(calcular_p(file_name=sys.argv[2]))
+        # avaliar_e_salvar_indicadora(file_name=sys.argv[2])
+        calcular_p(file_name=sys.argv[2])
 
     else:
         print("Inexistent option.")
