@@ -197,6 +197,7 @@ def plot(file_name=None):
     plt.semilogx([mi - math.sqrt(Var) for _ in range(0, n)], color="r")
     # plt.semilogx([mi + Var for _ in range(0, n)], color="y")
     # plt.semilogx([mi - Var for _ in range(0, n)], color="y")
+    plt.title("k = {}".format(k))
     plt.grid(True)
 
     plt.show()
