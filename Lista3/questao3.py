@@ -213,7 +213,7 @@ if __name__ == '__main__':
         # pprint(calcular_p(4))
         # a = gerar_e_salvar_todas(4)
         avaliar_e_salvar_indicadora(file_name=sys.argv[2])
-        # pprint(calcular_p(file_name=sys.argv[2]))
+        pprint(calcular_p(file_name=sys.argv[2]))
 
     else:
         print("Inexistent option.")
