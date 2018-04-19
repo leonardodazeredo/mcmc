@@ -9,9 +9,9 @@ def checkUrl(url):
     import socket
     try:
         socket.gethostbyname(url.strip())
-        return True
+        return True, url.strip()
     except socket.gaierror:
-        return False
+        return False, url.strip()
 
 
 letras = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
@@ -49,7 +49,7 @@ def avaliar_indicadora(ss):
 
 
 def prob_indicadora(indicadora_avaliada):
-    trues = [e for e in indicadora_avaliada if e]
+    trues = [e for e in indicadora_avaliada if e[0] == 'True']
     print("Válidos =", len(trues))
     print(len(trues), len(indicadora_avaliada))
     return estimar_diretamente(len(trues), len(indicadora_avaliada))
@@ -93,17 +93,31 @@ def fazer_e_salvar_amostra(n_ex=5, k=4, sufixo=""):
     k_arr = [k for i in range(0, n)]
     inicio = datetime.now()
     print("Gerando URLs.")
-    import multiprocessing
-    pool = multiprocessing.Pool()
     ps = list()
-    for r in tqdm.tqdm(pool.imap_unordered(gerar_url, k_arr), total=len(k_arr)):
+    for r in tqdm.tqdm(map(gerar_url, k_arr), total=len(k_arr)):
         ps.append(r)
-    pool.close()
-    pool.join()
     print("URLs gerandas.", "Tempo:", (datetime.now() - inicio))
     file_name = file_name_amostra(k, n_ex) + "_" + sufixo
     np.savez_compressed(file_name, amostra=ps)
     return k, n_ex, file_name
+
+
+# def fazer_e_salvar_amostra(n_ex=5, k=4, sufixo=""):
+#     n = 10**n_ex
+#     k_arr = [k for i in range(0, n)]
+#     inicio = datetime.now()
+#     print("Gerando URLs.")
+#     import multiprocessing
+#     pool = multiprocessing.Pool()
+#     ps = list()
+#     for r in tqdm.tqdm(pool.imap_unordered(gerar_url, k_arr), total=len(k_arr)):
+#         ps.append(r)
+#     pool.close()
+#     pool.join()
+#     print("URLs gerandas.", "Tempo:", (datetime.now() - inicio))
+#     file_name = file_name_amostra(k, n_ex) + "_" + sufixo
+#     np.savez_compressed(file_name, amostra=ps)
+#     return k, n_ex, file_name
 
 
 def avaliar_e_salvar_indicadora(file_name=None):
@@ -194,11 +208,23 @@ def calcular_p(file_name=None):
     return p
 
 
+def aux(file_name):
+    ia = np.load(file_name_indicadora(file_name_amostra=file_name) + ".npz")
+    for e in ia['amostra_eval']:
+        if e[0] == 'True':
+            pprint(e)
+
+
 if __name__ == '__main__':
     import sys
 
-    if len(sys.argv) == 1:
-        print("Incorrect use.")
+    if len(sys.argv) == 2:
+        # pprint(gerar_todas_strigs(4))
+        # pprint(calcular_p(4))
+        # a = gerar_e_salvar_todas(4)
+        # avaliar_e_salvar_indicadora(file_name=sys.argv[1])
+        calcular_p(file_name=sys.argv[1])
+        # aux(file_name=sys.argv[1])
 
     elif sys.argv[1] == '-amostrar':
         k = int(sys.argv[2])
@@ -211,13 +237,6 @@ if __name__ == '__main__':
 
     elif sys.argv[1] == '-plotar':
         plot(file_name=sys.argv[2])
-
-    elif sys.argv[1] == '-p':
-        # pprint(gerar_todas_strigs(4))
-        # pprint(calcular_p(4))
-        # a = gerar_e_salvar_todas(4)
-        # avaliar_e_salvar_indicadora(file_name=sys.argv[2])
-        calcular_p(file_name=sys.argv[2])
 
     else:
         print("Inexistent option.")
