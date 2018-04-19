@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import tqdm
 import random
+import math
 
 
 def checkUrl(url):
@@ -71,7 +72,7 @@ def contagem_cumulativa_da_indicadora_por_n(l):
     k = 0
     for e in l:
         if e[0] == 'True':
-            # if e:
+        # if e:
             k = k + 1
         l2.append(k)
     return l2
@@ -192,6 +193,10 @@ def plot(file_name=None):
 
     plt.semilogx(es)
     plt.semilogx([mi for _ in range(0, n)])
+    plt.semilogx([mi + math.sqrt(Var) for _ in range(0, n)], color="r")
+    plt.semilogx([mi - math.sqrt(Var) for _ in range(0, n)], color="r")
+    # plt.semilogx([mi + Var for _ in range(0, n)], color="y")
+    # plt.semilogx([mi - Var for _ in range(0, n)], color="y")
     plt.grid(True)
 
     plt.show()
