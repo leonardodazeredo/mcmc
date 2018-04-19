@@ -70,8 +70,8 @@ def contagem_cumulativa_da_indicadora_por_n(l):
     l2 = list()
     k = 0
     for e in l:
-        # if e[0] == 'True':
-        if e:
+        if e[0] == 'True':
+            # if e:
             k = k + 1
         l2.append(k)
     return l2
@@ -187,7 +187,11 @@ def plot(file_name=None):
 
     es = estimar_multi(ia=ia['amostra_eval'])
     es = np.multiply(es, card_D(k=k))
+
+    N, p, mi, Var = calcular_N_p_mi_Var(file_name="k_{}_todas.npz".format(k))
+
     plt.semilogx(es)
+    plt.semilogx([mi for _ in range(0, n)])
     plt.grid(True)
 
     plt.show()
@@ -215,14 +219,17 @@ def gerar_e_salvar_todas(k=4):
     return k, file_name
 
 
-def calcular_p(file_name=None):
+def calcular_N_p_mi_Var(file_name=None):
     ia = np.load(file_name_indicadora(file_name_amostra=file_name) + ".npz")
-    print("N =", len(ia['amostra_eval']))
+    N = len(ia['amostra_eval'])
     p = prob_indicadora(ia['amostra_eval'])
-    print("mi =", len(ia['amostra_eval']) * p * (1 - p))
-    print("Var =", len(ia['amostra_eval']) * p)
+    mi = len(ia['amostra_eval']) * p * (1 - p)
+    Var = len(ia['amostra_eval']) * p
+    print("N =", N)
     print("p =", p)
-    return p
+    print("mi =", mi)
+    print("Var =", Var)
+    return N, p, mi, Var
 
 
 def aux(file_name):
@@ -242,7 +249,7 @@ if __name__ == '__main__':
         # a = gerar_e_salvar_todas(4)
         # avaliar_e_salvar_indicadora(file_name=sys.argv[1])
         aux(file_name=sys.argv[1])
-        calcular_p(file_name=sys.argv[1])
+        calcular_N_p_mi_Var(file_name=sys.argv[1])
 
     elif sys.argv[1] == '-amostrar':
         k = int(sys.argv[2])
