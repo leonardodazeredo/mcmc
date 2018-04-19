@@ -6,12 +6,12 @@ import sys
 from decimal import Decimal
 
 
-def Z(i):
-    return (7 * i) - 7
-
-
 def G(i):
     return i * math.log(i, math.e)
+
+
+def Z(i):
+    return i
 
 
 def calc_C():
