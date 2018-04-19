@@ -27,7 +27,11 @@ def gerar_string(k):
 
 
 def gerar_url(k):
-    return "www." + gerar_string(k) + ".ufrj.br"
+    return url_template(gerar_string(k))
+
+
+def url_template(s):
+    return "www." + s.strip() + ".ufrj.br"
 
 
 def avaliar_indicadora(ss):
@@ -46,6 +50,7 @@ def avaliar_indicadora(ss):
 
 def prob_indicadora(indicadora_avaliada):
     trues = [e for e in indicadora_avaliada if e]
+    pprint(trues)
     return estimar_diretamente(len(trues), len(indicadora_avaliada))
 
 
@@ -78,7 +83,7 @@ def card_D(k):
     c = 0
     for ki in range(k, 0, -1):
         c += len(letras)**ki
-    print("Cardinalidade de Dk:", c)
+    print("N({}) =".format(k), c)
     return c
 
 
@@ -105,7 +110,8 @@ def avaliar_e_salvar_indicadora(file_name=None):
         raise ValueError('File_name none.')
     ps = np.load(file_name)
     n, k = get_n(ps), get_k(file_name)
-    print("n =", n)
+    print("n({}) =".format(k), n)
+    pprint(ps['amostra'])
     ia = avaliar_indicadora(ps['amostra'])
     n_ex = str(n).count('0')
     file_name = file_name_indicadora(file_name_amostra=file_name)
@@ -162,7 +168,7 @@ def gerar_todas_strigs(k=4):
     sl = list()
     for ki in range(k, 0, -1):
         for item in itertools.product(letras, repeat=ki):
-            sl.append("".join(item))
+            sl.append(url_template("".join(item)))
     return sl
 
 
@@ -170,6 +176,7 @@ def gerar_e_salvar_todas(k=4):
     inicio = datetime.now()
     print("Gerando URLs.")
     ps = gerar_todas_strigs(k=k)
+    # pprint(ps)
     print("URLs gerandas.", "Tempo:", (datetime.now() - inicio))
     file_name = "k_{}_todas".format(k)
     np.savez_compressed(file_name, amostra=ps)
@@ -178,6 +185,7 @@ def gerar_e_salvar_todas(k=4):
 
 def calcular_p(file_name=None):
     ia = np.load(file_name_indicadora(file_name_amostra=file_name) + ".npz")
+    print(ia['amostra_eval'], len(ia['amostra_eval']))
     p = prob_indicadora(ia['amostra_eval'])
     return p
 
@@ -203,8 +211,9 @@ if __name__ == '__main__':
     elif sys.argv[1] == '-p':
         # pprint(gerar_todas_strigs(4))
         # pprint(calcular_p(4))
-        # gerar_e_salvar_todas(4)
-        calcular_p(file_name=sys.argv[2])
+        # a = gerar_e_salvar_todas(4)
+        avaliar_e_salvar_indicadora(file_name=sys.argv[2])
+        # pprint(calcular_p(file_name=sys.argv[2]))
 
     else:
         print("Inexistent option.")
