@@ -96,8 +96,8 @@ def plot(n):
     plt.title('G relative error')
 
     plt.subplot(212)
-    plt.loglog(es)
-    plt.loglog([valor_real for i in range(1, n)])
+    plt.semilogx(es)
+    plt.semilogx([valor_real for i in range(1, n)])
     plt.grid(True)
     plt.title('G value')
 
@@ -107,6 +107,7 @@ def plot(n):
 if __name__ == '__main__':
     if len(sys.argv) == 2:
         M2(H)
+        # print(valor_real)
         plot(10**int(sys.argv[1]))
 
     else:
