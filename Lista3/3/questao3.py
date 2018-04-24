@@ -23,18 +23,19 @@ letras = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 
 todas_urls = None
 
 
-def gerar_url(k):
+def gerar_url_uniforme(k):
     global todas_urls
     if todas_urls is None:
         todas_urls = gerar_todas_strigs(k)
     return random.choice(todas_urls)
 
-# def gerar_url(k):
-#     global letras
-#     ks = list(range(k, 0, -1))
-#     k = random.choice(ks)
-#     s = random.choice(letras, k)
-#     return ''.join(s)
+
+def gerar_url_nao_uniforme(k):
+    global letras
+    ks = list(range(k, 0, -1))
+    k = np.random.choice(ks)
+    s = np.random.choice(letras, k)
+    return url_template(''.join(s))
 
 
 def url_template(s):
@@ -96,10 +97,12 @@ def card_D(k):
     return c
 
 
-def fazer_e_salvar_amostra(n_ex=5, k=4, sufixo=""):
+def fazer_e_salvar_amostra(n_ex=5, k=4, sufixo="", gerar_url=None):
     global todas_urls
     if todas_urls is None:
         todas_urls = gerar_todas_strigs(k)
+    if gerar_url is None:
+        gerar_url = gerar_url_uniforme
 
     n = 10**n_ex
     k_arr = [k for i in range(0, n)]
@@ -195,8 +198,6 @@ def plot(file_name=None):
     plt.semilogx([mi for _ in range(0, n)])
     plt.semilogx([mi + math.sqrt(Var) for _ in range(0, n)], color="r")
     plt.semilogx([mi - math.sqrt(Var) for _ in range(0, n)], color="r")
-    # plt.semilogx([mi + Var for _ in range(0, n)], color="y")
-    # plt.semilogx([mi - Var for _ in range(0, n)], color="y")
     plt.title("k = {}".format(k))
     plt.grid(True)
 
@@ -240,9 +241,19 @@ def calcular_N_p_mi_Var(file_name=None):
 
 def aux(file_name):
     ia = np.load(file_name_indicadora(file_name_amostra=file_name) + ".npz")
-    for e in ia['amostra_eval'][0:20]:
+    countT = countF = 0
+    for e in ia['amostra_eval']:
+        if countT >= 10:
+            break
         if e[0] == 'True':
             pprint(e)
+            countT += 1
+    for e in ia['amostra_eval']:
+        if countF >= 10:
+            break
+        if e[0] == 'False':
+            pprint(e)
+            countF += 1
     print(len(ia['amostra_eval']))
 
 
