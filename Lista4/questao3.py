@@ -38,18 +38,15 @@ def matrizPb(n):
     return A
 
 
-# def matrizPr(n):
-#     A = np.matrix(np.zeros([n, n]))
-#     i = 0
-#     while i < n:
-#         g = int((2 * (i + 1)))
-#         if g <= n - 1:
-#             A[i, g - 1] = A[i, g] = A[i + 1, int(i / 2)] = round(1 / 6, 4)
-#         elif i < n - 1:
-#             A[i + 1, int(i / 2)] = round(1 / 2, 4)
-#         # A[i, i] = round(1 / 2, 4)
-#         i += 1
-#     return A
+def pi_direto(P):
+    W = P[np.where(P > 0)].shape[1]
+    # print(W)
+    pi = []
+    for l in P:
+        g = l[np.where(l > 0)].shape[1]
+        # print(l[np.where(l > 0)])
+        pi.append(g / W)
+    return np.matrix(pi).transpose()
 
 
 def calcular_vetor_pi_iter(n):
@@ -62,7 +59,7 @@ def calcular_vetor_pi_iter(n):
     # pprint(R.transpose())
     i = 0
     result = 100
-    while result > 10**-5:
+    while result > 10**-10:
         Rn = R * P
         result = (np.sum(np.absolute(R - Rn))) / 2
         R = Rn
@@ -76,3 +73,5 @@ if __name__ == '__main__':
     pi = calcular_vetor_pi_iter(1023)
     pprint(pi)
     print(np.sum(pi))
+    P = matrizPa(1023)
+    print(pi_direto(P))
