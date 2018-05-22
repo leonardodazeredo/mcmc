@@ -19,23 +19,41 @@ def matrizPa(n):
 
 
 def matrizPb(n):
+    V1 = 1 / 2
+    V2 = 1 / 4
+    V3 = round(1 / 6, 5)
     A = np.matrix(np.zeros([n, n]))
-    A[0, 0] = 1 / 2
-    A[0, 1] = A[0, 2] = 1 / 4
-    A[1, 0] = 1 / 6
-    i = 1
-    while i < n:
-        g = int((2 * (i + 1)))
-        if g <= n - 1:
-            A[i, g - 1] = A[i, g] = A[i + 1, int(i / 2)] = 1 / 6
-        elif i < n - 1:
-            A[i + 1, int(i / 2)] = 1 / 2
-        if g == n - 1:
-            A[i + 1, int(i / 2)] = 1 / 2
-        A[i, i] = 1 / 2
+
+    i = 0
+    j = 1
+    while j + 1 < n:
+        A[i, j] = A[i, j + 1] = 1
         i += 1
+        j += 2
+
+    i = 1
+    j = 0
+    while i + 1 < n:
+        A[i, j] = A[i + 1, j] = 1
+        i += 2
+        j += 1
+
     for l in A:
-        print(round(np.sum(l), 6))
+        x = l[np.where(l > 0)].shape[1]
+        if x == 1:
+            l[np.where(l > 0)] = V1
+        elif x == 2:
+            l[np.where(l > 0)] = V2
+        elif x == 3:
+            l[np.where(l > 0)] = V3
+
+    for i in range(0, n):
+        A[i, i] = V1
+
+    # pprint(A)
+    #
+    # for l in A:
+    #     print(round(np.sum(l), 6))
     return A
 
 
@@ -71,12 +89,10 @@ def calcular_vetor_pi_iter(n, P):
         piR = piR * P
         piList.append(piR)
         result = DVT(piR, pi)
-        # print(result)
+        print(result)
         # pprint(piR.transpose())
-        # piRn = piR * P
-        # result = (np.sum(np.absolute(piR - piRn))) / 2
-        # piR = piRn
         i += 1
+    pprint(piR)
     return pi, piList
 
 
@@ -85,7 +101,7 @@ def grafico(api, apiList, bpi, bpiList):
     adata = [DVT(api, e) for e in apiList]
     # bdata = [DVT(bpi, e) for e in bpiList]
 
-    plt.loglog(adata)
+    plt.plot(adata)
     # plt.loglog(bdata)
     plt.grid(True)
     plt.title('loglog value')
@@ -94,14 +110,15 @@ def grafico(api, apiList, bpi, bpiList):
 
 
 if __name__ == '__main__':
-    n = 15
+    n = 7
     # matriz = matrizPa
     #
     # pprint(matrizPa(n))
 
-    P = matrizPa(n)
-    print(pi_direto(P))
+    # P = matrizPa(n)
+    # print(pi_direto(P))
     P = matrizPb(n)
+    print(P)
     print(pi_direto(P))
 
     api, apiList = calcular_vetor_pi_iter(n, matrizPa(n))
