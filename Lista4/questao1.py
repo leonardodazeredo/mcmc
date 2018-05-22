@@ -46,16 +46,22 @@ def calcular_vetor_pi(p0, p1, p2):
 
 
 if __name__ == '__main__':
-    P = matrizP(0.5, 0.3, 0.1)
-    pprint(P)
-    for l in P:
-        print(round(sum(l), 6))
+    # _pi = calcular_vetor_pi(0.5, 0.3, 0.1)
+    # pprint(matrizP())
+    # for l in P:
+    #     print(round(sum(l), 6))
 
-    # ps = [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0]
     ps = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+    i = 1
     for p0 in ps:
         for p1 in ps:
             for p2 in ps:
                 pi = calcular_vetor_pi(p0, p1, p2)
-                print("\n", p0, p1, p2)
+                print("\n########################################################")
+                print("\n{}:".format(i), p0, p1, p2)
+                pprint(matrizP(p0, p1, p2))
                 pprint(pi)
+                i += 1
+                # if not np.equal(_pi, pi).all():
+                #     pprint(matrizP(p0, p1, p2))
+                #     pprint(pi)
