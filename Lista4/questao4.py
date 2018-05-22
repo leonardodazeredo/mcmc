@@ -88,10 +88,9 @@ def calcular_vetor_pi_iter(n, P):
     # pprint(P)
     result = 1
     while result > 10**-4:
-        piRn = piR * P
-        result = DVT(piRn, pi)
-        piR = piRn
-        print(result)
+        piR = piR * P
+        result = DVT(piR, pi)
+        # print(result)
         # pprint(piR.transpose())
         # pprint(piR)
         # pprint(P)
@@ -148,7 +147,7 @@ def rodar(ns):
 if __name__ == '__main__':
     # ns = [10, 50, 100]#, 300, 700, 1000, 3000, 5000, 10000]
     # ns = [7]
-    ns = [7, 55, 127, 255, 765]#, 300, 700, 1000, 3000, 5000, 10000]
+    ns = [7, 55, 127, 255, 765, 1023]#, 300, 700, 1000, 3000, 5000, 10000]
     rodar(ns)
     # matriz = matrizPa
     #
