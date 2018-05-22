@@ -1,6 +1,7 @@
 from pprint import pprint
 import numpy as np
 from copy import deepcopy
+import matplotlib.pyplot as plt
 
 
 def matrizPa(n):
@@ -33,8 +34,8 @@ def matrizPb(n):
             A[i + 1, int(i / 2)] = 1 / 2
         A[i, i] = 1 / 2
         i += 1
-    # for l in A:
-    #     print(round(np.sum(l), 6))
+    for l in A:
+        print(round(np.sum(l), 6))
     return A
 
 
@@ -49,29 +50,64 @@ def pi_direto(P):
     return np.matrix(pi).transpose()
 
 
-def calcular_vetor_pi_iter(n):
-    P = matrizPa(n)
+def DVT(piR, pi):
+    return (np.sum(np.absolute(piR - pi))) / 2
+
+
+def calcular_vetor_pi_iter(n, P):
+    pi = pi_direto(P)
+
+    piList = []
+
     pi0 = np.matrix(np.zeros(n))
     pi0[0, 0] = 1
-    # print(P)
-    # pprint(pi0)
-    R = pi0 * P
-    # pprint(R.transpose())
+    piList.append(pi0)
+
+    piR = pi0 * P
+    piList.append(piR)
     i = 0
-    result = 100
-    while result > 10**-10:
-        Rn = R * P
-        result = (np.sum(np.absolute(R - Rn))) / 2
-        R = Rn
-        # pprint(R.transpose())
-        # print(np.sum(R))
+    result = 1
+    while result > 10**-2:
+        piR = piR * P
+        piList.append(piR)
+        result = DVT(piR, pi)
+        # print(result)
+        # pprint(piR.transpose())
+        # piRn = piR * P
+        # result = (np.sum(np.absolute(piR - piRn))) / 2
+        # piR = piRn
         i += 1
-    return R.transpose()
+    return pi, piList
+
+
+def grafico(api, apiList, bpi, bpiList):
+
+    adata = [DVT(api, e) for e in apiList]
+    # bdata = [DVT(bpi, e) for e in bpiList]
+
+    plt.loglog(adata)
+    # plt.loglog(bdata)
+    plt.grid(True)
+    plt.title('loglog value')
+
+    plt.show()
 
 
 if __name__ == '__main__':
-    pi = calcular_vetor_pi_iter(1023)
-    pprint(pi)
-    print(np.sum(pi))
-    P = matrizPa(1023)
+    n = 15
+    # matriz = matrizPa
+    #
+    # pprint(matrizPa(n))
+
+    P = matrizPa(n)
     print(pi_direto(P))
+    P = matrizPb(n)
+    print(pi_direto(P))
+
+    api, apiList = calcular_vetor_pi_iter(n, matrizPa(n))
+    bpi, bpiList = 0,0#calcular_vetor_pi_iter(n, matrizPb(n))
+
+    grafico(api, apiList, bpi, bpiList)
+
+    # pprint(pi)
+    # print(np.sum(pi))
