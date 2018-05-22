@@ -15,14 +15,14 @@ def matrizPa(n):
         A[i, i - 1] = 1 / 4
         A[i, i] = 1 / 2
         i += 1
-    pprint(A)
+    # pprint(A)
     return A
 
 
 def matrizPb(n):
     V1 = 1 / 2
     V2 = 1 / 4
-    V3 = round(1 / 6, 5)
+    V3 = 1 / 6
     A = np.matrix(np.zeros([n, n]))
 
     i = 0
@@ -51,7 +51,7 @@ def matrizPb(n):
     for i in range(0, n):
         A[i, i] = V1
 
-    pprint(A)
+    # pprint(A)
     #
     # for l in A:
     #     print(round(np.sum(l), 6))
@@ -71,6 +71,10 @@ def pi_direto(P):
 
 def DVT(piR, pi):
     valor = (np.sum(np.absolute(piR - pi.transpose()))) / 2
+    # if valor > 1:
+    #     pprint(piR)
+    #     pprint(pi.transpose())
+    # exit(0)
     return valor
 
 
@@ -86,40 +90,67 @@ def calcular_vetor_pi_iter(n, P):
     piR = pi0 * P
     piList.append(piR)
     i = 0
-    while i < 10**4:
+    # pprint(piR)
+    result = 1
+    while result > 10**-6:
         piR = piR * P
         piList.append(piR)
-        # result = DVT(piR, pi)
+        result = DVT(piR, pi)
+        if result > 1:
+            break
         # print(result)
         # pprint(piR.transpose())
         i += 1
-    # pprint(piR)
-    # result = 1
-    # while result > 10**-2:
-    #     piR = piR * P
-    #     piList.append(piR)
-    #     result = DVT(piR, pi)
-    #     print(result)
-    #     # pprint(piR.transpose())
-    #     i += 1
-    return pi, piList
+
+    return pi, piList, i
 
 
-def grafico(api, apiList, bpi, bpiList):
+def rodar_para_anel(ns):
+    tempos_anel = []
+    for n in ns:
+        pi, piList, i = calcular_vetor_pi_iter(n, matrizPa(n))
+        tempos_anel.append(i)
+        # print(piList[-1])
 
-    adata = [DVT(api, e) for e in apiList]
-    bdata = [DVT(bpi, e) for e in bpiList]
+    tempos_arvore = []
+    for n in ns:
+        pi, piList, i = calcular_vetor_pi_iter(n, matrizPb(n))
+        tempos_arvore.append(i)
+        # tempos_arvore.append(10000)
+    # print(piList[-1])
+    # data to plot
+    n_groups = len(ns)
 
-    plt.loglog(adata)
-    plt.loglog(bdata)
-    plt.grid(True)
-    plt.title('loglog value')
+    # create plot
+    fig, ax = plt.subplots()
+    index = np.arange(n_groups)
+    bar_width = 0.35
+    opacity = 0.8
+
+    plt.bar(index, tempos_anel, bar_width,
+                     alpha=opacity,
+                     color='b',
+                     label='Anel')
+
+    plt.bar(index + bar_width, tempos_arvore, bar_width,
+                     alpha=opacity,
+                     color='g',
+                     label='Arvore')
+
+    plt.xlabel('Grafo')
+    plt.ylabel('Tempo')
+    plt.xticks(index + bar_width, ns)
+    plt.legend()
+
+    plt.tight_layout()
 
     plt.show()
 
 
 if __name__ == '__main__':
-    n = 1023
+    # ns = [10, 50, 100]#, 300, 700, 1000, 3000, 5000, 10000]
+    ns = [15, 31, 127, 511]#, 300, 700, 1000, 3000, 5000, 10000]
+    rodar_para_anel(ns)
     # matriz = matrizPa
     #
     # pprint(matrizPa(n))
@@ -129,11 +160,11 @@ if __name__ == '__main__':
     # P = matrizPb(n)
     # print(P)
     # print(pi_direto(P))
-
-    api, apiList = calcular_vetor_pi_iter(n, matrizPa(n))
-    bpi, bpiList = calcular_vetor_pi_iter(n, matrizPb(n))
-
-    grafico(api, apiList, bpi, bpiList)
+    #
+    # api, apiList = calcular_vetor_pi_iter(n, matrizPa(n))
+    # bpi, bpiList = calcular_vetor_pi_iter(n, matrizPb(n))
+    #
+    # grafico(api, apiList, bpi, bpiList)
 
     # pprint(pi)
     # print(np.sum(pi))
