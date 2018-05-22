@@ -93,6 +93,14 @@ def calcular_vetor_pi_iter(n, P):
         # pprint(piR.transpose())
         i += 1
     # pprint(piR)
+    # result = 1
+    # while result > 10**-2:
+    #     piR = piR * P
+    #     piList.append(piR)
+    #     result = DVT(piR, pi)
+    #     print(result)
+    #     # pprint(piR.transpose())
+    #     i += 1
     return pi, piList
 
 
