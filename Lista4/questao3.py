@@ -58,14 +58,14 @@ def matrizPb(n):
     return A
 
 
-def pi_direto(P):
+def pi_direto(P, n):
     W = P[np.where(P > 0)].shape[1]
     # print(W)
     pi = []
     for l in P:
         g = l[np.where(l > 0)].shape[1]
         # print(l[np.where(l > 0)])
-        pi.append(g / W)
+        pi.append((g - 1) / (W - n))
     return np.matrix(pi).transpose()
 
 
@@ -75,7 +75,7 @@ def DVT(piR, pi):
 
 
 def calcular_vetor_pi_iter(n, P):
-    pi = pi_direto(P)
+    pi = pi_direto(P, n)
 
     piList = []
 

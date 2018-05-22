@@ -58,65 +58,63 @@ def matrizPb(n):
     return A
 
 
-def pi_direto(P):
+def pi_direto(P, n):
     W = P[np.where(P > 0)].shape[1]
     # print(W)
     pi = []
     for l in P:
         g = l[np.where(l > 0)].shape[1]
         # print(l[np.where(l > 0)])
-        pi.append(g / W)
+        pi.append((g - 1) / (W - n))
     return np.matrix(pi).transpose()
 
 
 def DVT(piR, pi):
     valor = (np.sum(np.absolute(piR - pi.transpose()))) / 2
-    # if valor > 1:
-    #     pprint(piR)
-    #     pprint(pi.transpose())
-    # exit(0)
     return valor
 
 
 def calcular_vetor_pi_iter(n, P):
-    pi = pi_direto(P)
-
-    piList = []
+    pi = pi_direto(P, n)
 
     pi0 = np.matrix(np.zeros(n))
     pi0[0, 0] = 1
-    piList.append(pi0)
+
+    # pprint(pi)
 
     piR = pi0 * P
-    piList.append(piR)
     i = 0
     # pprint(piR)
+    # pprint(P)
     result = 1
-    while result > 10**-6:
-        piR = piR * P
-        piList.append(piR)
-        result = DVT(piR, pi)
-        if result > 1:
-            break
-        # print(result)
+    while result > 10**-4:
+        piRn = piR * P
+        result = DVT(piRn, pi)
+        piR = piRn
+        print(result)
         # pprint(piR.transpose())
+        # pprint(piR)
+        # pprint(P)
+        # pprint(pi.transpose())
+        # pprint(np.absolute(piR - pi.transpose()))
         i += 1
 
-    return pi, piList, i
+    return pi, i
 
 
-def rodar_para_anel(ns):
+def rodar(ns):
     tempos_anel = []
     for n in ns:
-        pi, piList, i = calcular_vetor_pi_iter(n, matrizPa(n))
+        pi, i = calcular_vetor_pi_iter(n, matrizPa(n))
         tempos_anel.append(i)
+        # tempos_anel.append(0)
         # print(piList[-1])
 
     tempos_arvore = []
     for n in ns:
-        pi, piList, i = calcular_vetor_pi_iter(n, matrizPb(n))
+        pi, i = calcular_vetor_pi_iter(n, matrizPb(n))
         tempos_arvore.append(i)
-        # tempos_arvore.append(10000)
+        # tempos_arvore.append(0)
     # print(piList[-1])
     # data to plot
     n_groups = len(ns)
@@ -149,8 +147,9 @@ def rodar_para_anel(ns):
 
 if __name__ == '__main__':
     # ns = [10, 50, 100]#, 300, 700, 1000, 3000, 5000, 10000]
-    ns = [15, 31, 127, 511]#, 300, 700, 1000, 3000, 5000, 10000]
-    rodar_para_anel(ns)
+    # ns = [7]
+    ns = [7, 55, 127, 255, 765]#, 300, 700, 1000, 3000, 5000, 10000]
+    rodar(ns)
     # matriz = matrizPa
     #
     # pprint(matrizPa(n))
