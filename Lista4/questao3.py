@@ -30,7 +30,7 @@ def matrizPb(n):
         elif i < n - 1:
             A[i + 1, int(i / 2)] = 1 / 2
         if g == n - 1:
-             A[i + 1, int(i / 2)] = 1 / 2
+            A[i + 1, int(i / 2)] = 1 / 2
         A[i, i] = 1 / 2
         i += 1
 
@@ -57,18 +57,13 @@ def calcular_vetor_pi_iter(n):
     P = matrizPa(n)
     pi0 = np.matrix(np.zeros(n))
     pi0[0, 0] = 1
-
-    print(P)
-
+    # print(P)
     # pprint(pi0)
-
     R = pi0 * P
-
     # pprint(R.transpose())
-
     i = 0
     result = 100
-    while result > 10**-6:
+    while result > 10**-5:
         Rn = R * P
         result = (np.sum(np.absolute(R - Rn))) / 2
         R = Rn
@@ -79,7 +74,6 @@ def calcular_vetor_pi_iter(n):
 
 
 if __name__ == '__main__':
-    pi = calcular_vetor_pi_iter(15)
-    #
+    pi = calcular_vetor_pi_iter(1000)
     pprint(pi)
     print(np.sum(pi))
