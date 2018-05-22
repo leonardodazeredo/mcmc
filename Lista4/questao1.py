@@ -13,8 +13,7 @@ def matrizP(p0, p1, p2):
         [0, 0, p1 * (1 - p2), p2 * (1 - p1), 0, (1 - p1 - p2 + p1 * p2), 0, 0, p2 * p1],
         [p2 * (1 - p0), 0, 0, 0, 0, 0, (1 - p2), p2 * p0, 0],
         [0, p2 * (1 - p1), 0, 0, 0, 0, p1 * (1 - p2), (1 - p1 - p2 + p1 * p2), p2 * p1],
-        [0, 0, (p2 - p2**2), 0, 0, 0, (p2 - p2**2), 0, (2 * (p2**2) - 2 * p2 + 1)],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1]
+        [0, 0, (p2 - p2**2), 0, 0, 0, (p2 - p2**2), 0, (2 * (p2**2) - 2 * p2 + 1)]
     ]
     return roundM(P)
 
@@ -23,8 +22,8 @@ def matrizA(p0, p1, p2):
     P = matrizP(p0, p1, p2)
     A = deepcopy(P)
     for i, l in enumerate(A):
-        if i < len(l):
-            l[i] -= 1
+        l[i] -= 1
+    A.append([1, 1, 1, 1, 1, 1, 1, 1, 1])
     return roundM(A)
 
 
@@ -45,6 +44,23 @@ def calcular_vetor_pi(p0, p1, p2):
     return pi
 
 
+def calcular_vetor_pi_iter(p0, p1, p2):
+    P = matrizP(p0, p1, p2)
+    P = np.matrix(P)
+
+    pi0 = np.matrix([0, 0, 0, 0, 1, 0, 0, 0, 0])
+
+    R = pi0 * P
+    i = 0
+    result = 100
+    while result > 10**-10:
+        Rn = R * P
+        result = (np.sum(np.absolute(R - Rn))) / 2
+        R = Rn
+        i += 1
+    return R.transpose()
+
+
 if __name__ == '__main__':
     # _pi = calcular_vetor_pi(0.5, 0.3, 0.1)
     # pprint(matrizP())
@@ -56,7 +72,7 @@ if __name__ == '__main__':
     for p0 in ps:
         for p1 in ps:
             for p2 in ps:
-                pi = calcular_vetor_pi(p0, p1, p2)
+                pi = calcular_vetor_pi_iter(p0, p1, p2)
                 print("\n########################################################")
                 print("\n{}:".format(i), p0, p1, p2)
                 pprint(matrizP(p0, p1, p2))
