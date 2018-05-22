@@ -15,6 +15,7 @@ def matrizPa(n):
         A[i, i - 1] = 1 / 4
         A[i, i] = 1 / 2
         i += 1
+    pprint(A)
     return A
 
 
@@ -50,7 +51,7 @@ def matrizPb(n):
     for i in range(0, n):
         A[i, i] = V1
 
-    # pprint(A)
+    pprint(A)
     #
     # for l in A:
     #     print(round(np.sum(l), 6))
@@ -84,25 +85,24 @@ def calcular_vetor_pi_iter(n, P):
     piR = pi0 * P
     piList.append(piR)
     i = 0
-    result = 1
-    while result > 10**-2:
+    while i < 10**4:
         piR = piR * P
         piList.append(piR)
-        result = DVT(piR, pi)
-        print(result)
+        # result = DVT(piR, pi)
+        # print(result)
         # pprint(piR.transpose())
         i += 1
-    pprint(piR)
+    # pprint(piR)
     return pi, piList
 
 
 def grafico(api, apiList, bpi, bpiList):
 
     adata = [DVT(api, e) for e in apiList]
-    # bdata = [DVT(bpi, e) for e in bpiList]
+    bdata = [DVT(bpi, e) for e in bpiList]
 
-    plt.plot(adata)
-    # plt.loglog(bdata)
+    plt.loglog(adata)
+    plt.loglog(bdata)
     plt.grid(True)
     plt.title('loglog value')
 
@@ -110,19 +110,19 @@ def grafico(api, apiList, bpi, bpiList):
 
 
 if __name__ == '__main__':
-    n = 7
+    n = 1023
     # matriz = matrizPa
     #
     # pprint(matrizPa(n))
 
     # P = matrizPa(n)
     # print(pi_direto(P))
-    P = matrizPb(n)
-    print(P)
-    print(pi_direto(P))
+    # P = matrizPb(n)
+    # print(P)
+    # print(pi_direto(P))
 
     api, apiList = calcular_vetor_pi_iter(n, matrizPa(n))
-    bpi, bpiList = 0,0#calcular_vetor_pi_iter(n, matrizPb(n))
+    bpi, bpiList = calcular_vetor_pi_iter(n, matrizPb(n))
 
     grafico(api, apiList, bpi, bpiList)
 
