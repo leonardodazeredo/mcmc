@@ -33,9 +33,8 @@ def matrizPb(n):
             A[i + 1, int(i / 2)] = 1 / 2
         A[i, i] = 1 / 2
         i += 1
-
-    for l in A:
-        print(round(np.sum(l), 6))
+    # for l in A:
+    #     print(round(np.sum(l), 6))
     return A
 
 
@@ -74,6 +73,6 @@ def calcular_vetor_pi_iter(n):
 
 
 if __name__ == '__main__':
-    pi = calcular_vetor_pi_iter(1000)
+    pi = calcular_vetor_pi_iter(1023)
     pprint(pi)
     print(np.sum(pi))
