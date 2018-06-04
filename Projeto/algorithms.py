@@ -1,7 +1,13 @@
 from collections import deque
 from city import distance, GeoCity, Euc_2D, GeoCoord
 from tspparse import read_tsp_file
-from numpy import array
+import numpy as np
+import random
+import math
+from copy import deepcopy, copy
+import matplotlib.pyplot as plt
+from pprint import pprint
+from tqdm import tqdm
 
 
 def calc_distance(tsp, city1_index, city2_index):
@@ -88,3 +94,42 @@ def calc_nearest_neighbor_tour(tsp):
 
 def calc_furthest_neighbor_tour(tsp):
     return path_length(tsp, furthest_neighbor_tour(tsp))
+
+
+def _generate_random_neighbor(tsp, tour):
+    [i, j] = sorted(random.sample(range(tsp["DIMENSION"]), 2))
+    # newTour = tour[:i] + tour[j:j + 1] + tour[i + 1:j] + tour[i:i + 1] + tour[j + 1:]
+    newTour = tour[:i] + copy(tour[i:j + 1])[::-1] + tour[j + 1:]
+    # print([i, j])
+    # pprint(tour)
+    # pprint(newTour)
+    assert len(tour) == len(newTour)
+    return newTour
+
+
+def sa(tsp):
+    tour = random.sample(range(tsp["DIMENSION"]), tsp["DIMENSION"])
+
+    agenda_temp = np.logspace(0, 5, num=100000)[::-1]
+
+    # print(tour)
+
+    # for temperature in [100, 10]:
+    for temperature in tqdm(agenda_temp):
+        for i in range(1):
+            newTour = _generate_random_neighbor(tsp, tour)
+
+            oldDistances = path_length(tsp, deepcopy(tour))
+            newDistances = path_length(tsp, deepcopy(newTour))
+
+            # print(oldDistances, newDistances)
+            # return
+
+            if math.exp((oldDistances - newDistances) / temperature) > random.random():
+                tour = deepcopy(newTour)
+
+    # print(tour)
+    print(path_length(tsp, tour))
+
+    # plt.plot(zip(*[cities[tour[i % 15]] for i in range(16)])[0], zip(*[cities[tour[i % 15]] for i in range(16)])[1], 'xb-', )
+    # plt.show()
