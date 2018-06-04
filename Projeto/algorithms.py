@@ -149,22 +149,22 @@ def tour_length(tsp, tour):
     return path_length(tsp, deepcopy(tour))
 
 
-def sa(tsp, T0=0, N=100, alpha=0.99, rate_func=exp_rate):
-    best_tour = tour = random.sample(range(tsp["DIMENSION"]), tsp["DIMENSION"])
+def sa(tsp, T0=0, N=3, alpha=0.99, rate_func=exp_rate):
+    best_tour = current_tour = random.sample(range(tsp["DIMENSION"]), tsp["DIMENSION"])
     best_length = tour_length(tsp, best_tour)
 
     agenda_temp = rate_func(T0=T0, alpha=alpha)
 
     for temperature in tqdm(agenda_temp):
         for i in range(N):
-            newTour = _generate_random_neighbor(tsp, tour)
+            new_tour = _generate_random_neighbor(tsp, current_tour)
 
-            length_current_state = tour_length(tsp, tour)
-            length_new_state = tour_length(tsp, newTour)
+            length_current_state = tour_length(tsp, current_tour)
+            length_new_state = tour_length(tsp, new_tour)
 
             if e_power((length_current_state - length_new_state) / temperature) > random.random():
-                tour = deepcopy(newTour)
+                current_tour = deepcopy(new_tour)
                 if best_length > length_new_state:
-                    best_tour = deepcopy(tour)
+                    best_tour = deepcopy(current_tour)
 
-    return best_tour, tour_length(tsp, best_tour), tour, tour_length(tsp, tour)
+    return best_tour, tour_length(tsp, best_tour), current_tour, tour_length(tsp, current_tour)
