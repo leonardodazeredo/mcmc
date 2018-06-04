@@ -1,5 +1,13 @@
 from collections import deque
 from city import GeoCoord, GeoCity, Euc_2D
+from pprint import pprint
+
+
+def minimal_tsp_tour():
+    return {"COMMENT": "",
+           "DIMENSION": None,
+            "TYPE": None,
+            "TOUR": []}
 
 
 def minimal_tsp():
@@ -26,6 +34,8 @@ def scan_keywords(tsp, tspfile):
         elif keyword == "EDGE_WEIGHT_TYPE":
             tsp["EDGE_WEIGHT_TYPE"] = " ".join(words).strip(": ")
         elif keyword == "NODE_COORD_SECTION":
+            break
+        elif keyword == "TOUR_SECTION":
             break
 
 
@@ -78,10 +88,33 @@ def read_cities(tsp, tspfile):
             print("Unsupported coordinate type: " + tsp["EDGE_WEIGHT_TYPE"])
 
 
+def read_numbered_node_tour(desired_number, words):
+    city_number = read_int(words)
+    # print(city_number)
+    return city_number
+
+
+def read_tour(tsp, tspfile):
+    for n in range(1, tsp["DIMENSION"] + 1):
+        line = tspfile.readline()
+        words = deque(line.split())
+        tsp["TOUR"].append(read_numbered_node_tour(n, words))
+
+
 def read_tsp_file(path):
     tspfile = open(path, 'r')
     tsp = minimal_tsp()
     scan_keywords(tsp, tspfile)
     read_cities(tsp, tspfile)
     tspfile.close()
+    return tsp
+
+
+def read_tsp_tour_file(path):
+    tspfile = open(path, 'r')
+    tsp = minimal_tsp_tour()
+    scan_keywords(tsp, tspfile)
+    read_tour(tsp, tspfile)
+    tspfile.close()
+    # pprint(tsp)
     return tsp
