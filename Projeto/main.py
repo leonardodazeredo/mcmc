@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from argparser import parser
-from tspparse import read_tsp_file
+from tspparse import read_tsp_file, read_tsp_tour_file
 from algorithms import calc_nearest_neighbor_tour, calc_in_order_tour, calc_furthest_neighbor_tour
 
 from glob import iglob
@@ -21,6 +21,9 @@ def glean_tsp_files(path_arg_list):
         elif isfile(path_arg) & str(path_arg).endswith(".tsp"):
             yield path_arg
 
+        elif isfile(path_arg) & str(path_arg).endswith(".opt.tour"):
+            yield path_arg
+
         elif isfile(path_arg) & (not path_arg.endswith(".tsp")):
             print("Can't open file ``{0}'': not a .tsp file".format(path_arg))
 
@@ -32,9 +35,17 @@ def glean_tsp_files(path_arg_list):
 
 
 def print_results_from_tsp_path(call_args, tsp_path):
+    # if call_args.need_opt_tours_printed:
+    #     print("OPT TOUR: {}"
+    #          . format(read_tsp_tour_file(tsp_path)))
+    #
+    # return
+
     tsp = read_tsp_file(tsp_path)
     print("TSP Problem:              {}".format(tsp["NAME"]))
     print("PATH:                     {}".format(tsp_path))
+
+    # print(tsp)
 
     if call_args.need_in_order:
         print("IN-ORDER TOUR LENGTH:     {}"
