@@ -58,6 +58,15 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "-a"
+    "--all",
+    action="store_true",
+    dest="call_all",
+    default=False,
+    help=""
+)
+
+parser.add_argument(
     "tsp_queue",
     nargs="+",
     metavar="PATH",
