@@ -42,7 +42,7 @@ def process_from_tsp_path(call_args, tsp_path):
 
     if call_args.call_all:
         # print("IN-ORDER TOUR LENGTH:     {}".format(calc_in_order_tour(tsp)))
-        print("NEAREST NEIGHBOR LENGTH:  {}".format(calc_nearest_neighbor_tour(tsp)))
+        # print("NEAREST NEIGHBOR LENGTH:  {}".format(calc_nearest_neighbor_tour(tsp)))
         # print("FURTHEST NEIGHBOR LENGTH: {}".format(calc_furthest_neighbor_tour(tsp)))
         print("OPT LENGTH:               {}".format(calc_opt_tour(tsp, tsp_path)))
         best_tour, length_b, current_tour, length_c = sa(tsp)

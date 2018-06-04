@@ -154,11 +154,15 @@ def tour_length(tsp, tour):
     return path_length(tsp, deepcopy(tour))
 
 
-def sa(tsp, T0=0, N=10, alpha=0.999, rate_func=exp_rate):
+def sa(tsp, T0=5, N=10, alpha=0.99, rate_func=exp_rate):
     best_tour = current_tour = random.sample(range(tsp["DIMENSION"]), tsp["DIMENSION"])
     best_length = tour_length(tsp, best_tour)
 
     agenda_temp = rate_func(T0=T0, alpha=alpha)
+
+    # pprint(agenda_temp)
+
+    print("T0=10^{} N={} alpha={} rate={}".format(T0, N, alpha, rate_func))
 
     for temperature in tqdm(agenda_temp):
         for i in range(N):
