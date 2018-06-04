@@ -111,6 +111,7 @@ def read_tsp_file(path):
 
 
 def read_tsp_tour_file(path):
+    print(path)
     tspfile = open(path, 'r')
     tsp = minimal_tsp_tour()
     scan_keywords(tsp, tspfile)

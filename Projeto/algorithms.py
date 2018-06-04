@@ -96,6 +96,11 @@ def calc_furthest_neighbor_tour(tsp):
     return path_length(tsp, furthest_neighbor_tour(tsp))
 
 
+def calc_opt_tour(tsp, tsp_path):
+    from tspparse import read_tsp_tour_file
+    return path_length(tsp, read_tsp_tour_file(tsp_path.replace(".tsp", ".opt.tour"))["TOUR"])
+
+
 INVERSE_SECTION = 'INVERSE_SECTION'
 INVERSE_PAIR = 'INVERSE_PAIR'
 
@@ -149,7 +154,7 @@ def tour_length(tsp, tour):
     return path_length(tsp, deepcopy(tour))
 
 
-def sa(tsp, T0=0, N=3, alpha=0.99, rate_func=exp_rate):
+def sa(tsp, T0=0, N=3, alpha=0.999, rate_func=exp_rate):
     best_tour = current_tour = random.sample(range(tsp["DIMENSION"]), tsp["DIMENSION"])
     best_length = tour_length(tsp, best_tour)
 
