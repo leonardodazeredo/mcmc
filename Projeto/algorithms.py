@@ -96,40 +96,75 @@ def calc_furthest_neighbor_tour(tsp):
     return path_length(tsp, furthest_neighbor_tour(tsp))
 
 
-def _generate_random_neighbor(tsp, tour):
+INVERSE_SECTION = 'INVERSE_SECTION'
+INVERSE_PAIR = 'INVERSE_PAIR'
+
+
+def _generate_random_neighbor(tsp, tour, method=INVERSE_SECTION):
     [i, j] = sorted(random.sample(range(tsp["DIMENSION"]), 2))
-    # newTour = tour[:i] + tour[j:j + 1] + tour[i + 1:j] + tour[i:i + 1] + tour[j + 1:]
-    newTour = tour[:i] + copy(tour[i:j + 1])[::-1] + tour[j + 1:]
-    # print([i, j])
-    # pprint(tour)
-    # pprint(newTour)
+    if method == INVERSE_SECTION:
+        newTour = tour[:i] + copy(tour[i:j + 1])[::-1] + tour[j + 1:]
+    else:
+        newTour = tour[:i] + tour[j:j + 1] + tour[i + 1:j] + tour[i:i + 1] + tour[j + 1:]
     assert len(tour) == len(newTour)
     return newTour
 
 
-def sa(tsp):
-    tour = random.sample(range(tsp["DIMENSION"]), tsp["DIMENSION"])
+def linear_rate_uniform(T0=5, size=100000):
+    return np.logspace(0, 5, num=size)[::-1]
 
-    agenda_temp = np.logspace(0, 5, num=100000)[::-1]
 
-    # print(tour)
+def linear_rate(T0=10, alpha=0.5):
+    T = T0 = 10**T0
+    temps = []
+    t = 0
+    while round(T, 6) > 0.0:
+        T = T0 - (alpha * t)
+        temps.append(T)
+        print(T)
+        t += 1
+    return temps
 
-    # for temperature in [100, 10]:
+
+def exp_rate(T0, alpha):
+    T = T0 = 10**T0
+    temps = []
+    t = 0
+    while round(T, 6) > 0.0:
+        T = T0 * (alpha**t)
+        temps.append(T)
+        t += 1
+    return temps
+
+
+def e_power(arg):
+    try:
+        ans = math.exp(arg)
+    except OverflowError:
+        ans = float('inf')
+    return ans
+
+
+def tour_length(tsp, tour):
+    return path_length(tsp, deepcopy(tour))
+
+
+def sa(tsp, T0=0, N=100, alpha=0.99, rate_func=exp_rate):
+    best_tour = tour = random.sample(range(tsp["DIMENSION"]), tsp["DIMENSION"])
+    best_length = tour_length(tsp, best_tour)
+
+    agenda_temp = rate_func(T0=T0, alpha=alpha)
+
     for temperature in tqdm(agenda_temp):
-        for i in range(1):
+        for i in range(N):
             newTour = _generate_random_neighbor(tsp, tour)
 
-            oldDistances = path_length(tsp, deepcopy(tour))
-            newDistances = path_length(tsp, deepcopy(newTour))
+            length_current_state = tour_length(tsp, tour)
+            length_new_state = tour_length(tsp, newTour)
 
-            # print(oldDistances, newDistances)
-            # return
-
-            if math.exp((oldDistances - newDistances) / temperature) > random.random():
+            if e_power((length_current_state - length_new_state) / temperature) > random.random():
                 tour = deepcopy(newTour)
+                if best_length > length_new_state:
+                    best_tour = deepcopy(tour)
 
-    # print(tour)
-    print(path_length(tsp, tour))
-
-    # plt.plot(zip(*[cities[tour[i % 15]] for i in range(16)])[0], zip(*[cities[tour[i % 15]] for i in range(16)])[1], 'xb-', )
-    # plt.show()
+    return best_tour, tour_length(tsp, best_tour), tour, tour_length(tsp, tour)
