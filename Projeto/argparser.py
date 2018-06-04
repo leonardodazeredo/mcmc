@@ -49,6 +49,15 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "-sa"
+    "--simulated-annealing",
+    action="store_true",
+    dest="call_sa",
+    default=False,
+    help=""
+)
+
+parser.add_argument(
     "tsp_queue",
     nargs="+",
     metavar="PATH",
