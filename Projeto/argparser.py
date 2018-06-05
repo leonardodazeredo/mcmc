@@ -58,6 +58,15 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "-e"
+    "--experiment",
+    action="store_true",
+    dest="experiment",
+    default=False,
+    help=""
+)
+
+parser.add_argument(
     "tsp_queue",
     nargs="+",
     metavar="PATH",

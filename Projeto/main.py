@@ -21,9 +21,6 @@ def glean_tsp_files(path_arg_list):
         elif isfile(path_arg) & str(path_arg).endswith(".tsp"):
             yield path_arg
 
-        elif isfile(path_arg) & str(path_arg).endswith(".opt.tour"):
-            yield path_arg
-
         elif isfile(path_arg) & (not path_arg.endswith(".tsp")):
             print("Can't open file ``{0}'': not a .tsp file".format(path_arg))
 
@@ -65,8 +62,14 @@ def process_from_tsp_path(call_args, tsp_path):
 
 def main():
     call_args = parser.parse_args()
-    for tsp_path in glean_tsp_files(call_args.tsp_queue):
-        process_from_tsp_path(call_args, tsp_path)
+
+    if call_args.experiment:
+        from experiments import testar_parametros_paralelo_por_arquivo
+        r = testar_parametros_paralelo_por_arquivo(list(glean_tsp_files(call_args.tsp_queue)))
+        pprint(r)
+    else:
+        for tsp_path in glean_tsp_files(call_args.tsp_queue):
+            process_from_tsp_path(call_args, tsp_path)
 
 
 if __name__ == "__main__":
