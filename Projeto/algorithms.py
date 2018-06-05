@@ -96,23 +96,6 @@ def calc_furthest_neighbor_tour(tsp):
     return path_length(tsp, furthest_neighbor_tour(tsp))
 
 
-INVERSE_SECTION = 'INVERSE_SECTION'
-INVERSE_PAIR = 'INVERSE_PAIR'
-
-
-def _generate_random_neighbor(tsp, tour, method=INVERSE_SECTION):
-    [i, j] = sorted(random.sample(range(1, tsp["DIMENSION"]), 2))
-    if method == INVERSE_SECTION:
-        newTour = tour[:i] + copy(tour[i:j + 1])[::-1] + tour[j + 1:]
-    else:
-        newTour = tour[:i] + tour[j:j + 1] + tour[i + 1:j] + tour[i:i + 1] + tour[j + 1:]
-    assert len(tour) == len(newTour)
-    assert len(set(tour)) == len(tour) - 1
-    assert len(set(newTour)) == len(newTour) - 1
-    assert set(tour) == set(newTour)
-    return newTour
-
-
 def linear_rate(T0=10, alpha=0.5):
     T = T0 = 10**T0
     temps = []
@@ -148,6 +131,24 @@ def tour_length(tsp, tour):
     return path_length(tsp, deepcopy(tour))
 
 
+INVERSE_SECTION = 'INVERSE_SECTION'
+INVERSE_PAIR = 'INVERSE_PAIR'
+
+
+def _generate_random_neighbor(tsp, tour, method=INVERSE_SECTION):
+    tour = tour[0]
+    [i, j] = sorted(random.sample(range(1, tsp["DIMENSION"]), 2))
+    if method == INVERSE_SECTION:
+        newTour = tour[:i] + copy(tour[i:j + 1])[::-1] + tour[j + 1:]
+    else:
+        newTour = tour[:i] + tour[j:j + 1] + tour[i + 1:j] + tour[i:i + 1] + tour[j + 1:]
+    assert len(tour) == len(newTour)
+    assert len(set(tour)) == len(tour) - 1
+    assert len(set(newTour)) == len(newTour) - 1
+    assert set(tour) == set(newTour)
+    return newTour, tour_length(tsp, newTour)
+
+
 def _generate_tour_at_0(tsp):
     tour = random.sample(range(tsp["DIMENSION"]), tsp["DIMENSION"])
     idx0 = tour.index(0)
@@ -155,13 +156,11 @@ def _generate_tour_at_0(tsp):
     tour[0] = tour[idx0]
     tour[idx0] = aux
     tour.append(0)
-    return tour
+    return tour, tour_length(tsp, tour)
 
 
 def sa(tsp, T0=5, N=10, alpha=0.999, rate_func=exp_rate):
     best_tour = current_tour = _generate_tour_at_0(tsp)
-    # print(tour_length(tsp, best_tour))
-    best_length = tour_length(tsp, best_tour)
 
     agenda_temp = rate_func(T0=T0, alpha=alpha)
 
@@ -172,19 +171,15 @@ def sa(tsp, T0=5, N=10, alpha=0.999, rate_func=exp_rate):
         for i in range(N):
             new_tour = _generate_random_neighbor(tsp, current_tour)
 
-            length_current_state = tour_length(tsp, current_tour)
-            length_new_state = tour_length(tsp, new_tour)
-
-            if e_power((length_current_state - length_new_state) / temperature) > random.uniform(0.0, 1.0):
+            if e_power((current_tour[1] - new_tour[1]) / temperature) > random.uniform(0.0, 1.0):
                 current_tour = deepcopy(new_tour)
-                if best_length > length_new_state:
+                if best_tour[1] > current_tour[1]:
                     best_tour = deepcopy(current_tour)
-                    best_length = tour_length(tsp, best_tour)
 
-                    bar.set_description("Best length so far: {}".format(best_length))
+                    bar.set_description("Best length so far: {}".format(best_tour[1]))
                     bar.refresh()
 
-        if best_length == 6859:
+        if best_tour[1] == 6859:
             break
 
-    return best_tour, tour_length(tsp, best_tour), current_tour, tour_length(tsp, current_tour)
+    return best_tour, current_tour
