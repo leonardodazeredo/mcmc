@@ -41,8 +41,10 @@ def process_from_tsp_path(call_args, tsp_path):
     print("DIMENSION:                {} points".format(tsp["DIMENSION"]))
 
     if call_args.call_all:
-        best_tour, current_tour = sa(tsp)
-        print("SA LENGTH:                {}".format(best_tour[1]))
+        from experiments import testar_parametros
+
+        testar_parametros(tsp)
+
     else:
         if call_args.need_in_order:
             print("IN-ORDER TOUR LENGTH:     {}".format(calc_in_order_tour(tsp)))
