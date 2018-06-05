@@ -1,5 +1,4 @@
 from algorithms import sa
-from datetime import datetime
 import tqdm
 
 
@@ -15,17 +14,16 @@ def gerar_parametros(tsp):
 
 
 def test(pram_grip):
-    sa(**pram_grip)
+    return sa(**pram_grip)
 
 
-def testar_parametros(tsp):
-    inicio = datetime.now()
+def testar_parametros_paralelo_por_combinacao(tsp):
     parametros_dict_list = list(gerar_parametros(tsp))
     import multiprocessing
     pool = multiprocessing.Pool()
     i = list()
     for r in tqdm.tqdm(pool.imap_unordered(test, parametros_dict_list), total=len(parametros_dict_list)):
         i.append(r)
+        # print(r)
     pool.close()
     pool.join()
-    print("Tempo:", (datetime.now() - inicio))

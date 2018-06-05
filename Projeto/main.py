@@ -41,9 +41,9 @@ def process_from_tsp_path(call_args, tsp_path):
     print("DIMENSION:                {} points".format(tsp["DIMENSION"]))
 
     if call_args.call_all:
-        from experiments import testar_parametros
+        from experiments import testar_parametros_paralelo_por_combinacao
 
-        testar_parametros(tsp)
+        testar_parametros_paralelo_por_combinacao(tsp)
 
     else:
         if call_args.need_in_order:

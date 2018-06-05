@@ -159,7 +159,12 @@ def _generate_tour_at_0(tsp):
     return tour, tour_length(tsp, tour)
 
 
+from datetime import datetime
+
+
 def sa(tsp, T0=5, N=100, alpha=0.999, rate_func=exp_rate, verbose=True):
+    inicio = datetime.now()
+
     best_tour = current_tour = _generate_tour_at_0(tsp)
 
     agenda_temp = rate_func(T0=T0, alpha=alpha)
@@ -186,4 +191,5 @@ def sa(tsp, T0=5, N=100, alpha=0.999, rate_func=exp_rate, verbose=True):
         # if best_tour[1] == 6859:
         #     break
 
-    return best_tour, current_tour
+    tempo_total = str((datetime.now() - inicio))
+    return best_tour, tempo_total, dict(tsp=tsp, T0=T0, N=N, alpha=alpha)
