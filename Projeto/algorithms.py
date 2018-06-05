@@ -160,20 +160,22 @@ def sa(tsp, T0=5, N=10, alpha=0.99, rate_func=exp_rate):
 
     agenda_temp = rate_func(T0=T0, alpha=alpha)
 
-    # pprint(agenda_temp)
-
     print("T0=10^{} N={} alpha={} rate={}".format(T0, N, alpha, rate_func))
 
-    for temperature in tqdm(agenda_temp):
+    bar = tqdm(agenda_temp)
+    for temperature in bar:
         for i in range(N):
             new_tour = _generate_random_neighbor(tsp, current_tour)
 
             length_current_state = tour_length(tsp, current_tour)
             length_new_state = tour_length(tsp, new_tour)
 
-            if e_power((length_current_state - length_new_state) / temperature) > random.random():
+            if e_power((length_current_state - length_new_state) / temperature) > random.uniform(0.0, 1.0):
                 current_tour = deepcopy(new_tour)
                 if best_length > length_new_state:
                     best_tour = deepcopy(current_tour)
+                    best_length = length_current_state
+                    bar.set_description("Best length so far: {}".format(best_length))
+                    bar.refresh()
 
     return best_tour, tour_length(tsp, best_tour), current_tour, tour_length(tsp, current_tour)
