@@ -99,6 +99,7 @@ def read_tour(tsp, tspfile):
         words = deque(line.split())
         tsp["TOUR"].append(read_numbered_node_tour(words))
     tsp["TOUR"].append(tsp["TOUR"][0])
+    print(tsp["TOUR"])
 
 
 def read_tsp_file(path):

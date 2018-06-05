@@ -98,7 +98,8 @@ def calc_furthest_neighbor_tour(tsp):
 
 def calc_opt_tour(tsp, tsp_path):
     from tspparse import read_tsp_tour_file
-    return path_length(tsp, read_tsp_tour_file(tsp_path.replace(".tsp", ".opt.tour"))["TOUR"])
+    tour = read_tsp_tour_file(tsp_path.replace(".tsp", ".opt.tour"))["TOUR"]
+    return tour_length(tsp, tour)
 
 
 INVERSE_SECTION = 'INVERSE_SECTION'
@@ -115,9 +116,6 @@ def _generate_random_neighbor(tsp, tour, method=INVERSE_SECTION):
     assert len(set(tour)) == len(tour) - 1
     assert len(set(newTour)) == len(newTour) - 1
     assert set(tour) == set(newTour)
-    # print(tour)
-    # print(newTour)
-    # exit(0)
     return newTour
 
 
@@ -170,7 +168,7 @@ def _generate_tour_at_0(tsp):
     return tour
 
 
-def sa(tsp, T0=5, N=100, alpha=0.999, rate_func=exp_rate):
+def sa(tsp, T0=5, N=10, alpha=0.999, rate_func=exp_rate):
     best_tour = current_tour = _generate_tour_at_0(tsp)
     # print(tour_length(tsp, best_tour))
     best_length = tour_length(tsp, best_tour)
@@ -194,5 +192,7 @@ def sa(tsp, T0=5, N=100, alpha=0.999, rate_func=exp_rate):
                     best_length = length_current_state
                     bar.set_description("Best length so far: {}".format(best_length))
                     bar.refresh()
+        if best_length == 6859:
+            break
 
     return best_tour, tour_length(tsp, best_tour), current_tour, tour_length(tsp, current_tour)
