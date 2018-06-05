@@ -71,6 +71,8 @@ def main():
         binary_file = open(call_args.tsp_queue[0] + '/my_pickled_results.bin', mode='wb')
         pickle.dump(r, binary_file)
         binary_file.close()
+        import os
+        os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (1, 440))
         # r = pickle.loads(open('my_pickled_results.bin', mode='rb').read())
         # pprint(r)
     else:
