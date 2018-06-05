@@ -47,3 +47,22 @@ def testar_parametros_paralelo_por_arquivo(tsp_path_list):
     pool.close()
     pool.join()
     return i
+
+
+aux_dict = {}
+
+
+def process_results(results_list):
+    results_list.sort(key=lambda tup: tup[0][1])
+    for r in results_list:
+        r = list(r)
+        # pprint(r[2])
+        name_key = r[2]["tsp"]["NAME"]
+        if name_key not in aux_dict:
+            aux_dict[name_key] = []
+        r[2]["tsp"] = name_key
+        r[0] = r[0][1]
+        aux_dict[name_key].append(r)
+
+    for k, v in aux_dict.items():
+        pprint(v[0])

@@ -81,8 +81,12 @@ def main():
         binary_file.close()
         import os
         os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (0.1, 440))
-        # r = pickle.loads(open('my_pickled_results.bin', mode='rb').read())
-        # pprint(r)
+
+    elif call_args.results:
+        from experiments import process_results
+        import pickle
+        r = pickle.loads(open(call_args.tsp_queue[0] + '/my_pickled_results.bin', mode='rb').read())
+        process_results(r)
     else:
         for tsp_path in glean_tsp_files(call_args.tsp_queue):
             process_from_tsp_path(call_args, tsp_path)
