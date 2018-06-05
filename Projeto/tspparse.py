@@ -88,17 +88,17 @@ def read_cities(tsp, tspfile):
             print("Unsupported coordinate type: " + tsp["EDGE_WEIGHT_TYPE"])
 
 
-def read_numbered_node_tour(desired_number, words):
+def read_numbered_node_tour(words):
     city_number = read_int(words)
-    # print(city_number)
-    return city_number
+    return city_number - 1
 
 
 def read_tour(tsp, tspfile):
-    for n in range(1, tsp["DIMENSION"] + 1):
+    for _ in range(1, tsp["DIMENSION"] + 1):
         line = tspfile.readline()
         words = deque(line.split())
-        tsp["TOUR"].append(read_numbered_node_tour(n, words))
+        tsp["TOUR"].append(read_numbered_node_tour(words))
+    tsp["TOUR"].append(tsp["TOUR"][0])
 
 
 def read_tsp_file(path):
