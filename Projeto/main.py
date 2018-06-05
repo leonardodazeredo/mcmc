@@ -64,9 +64,15 @@ def main():
     call_args = parser.parse_args()
 
     if call_args.experiment:
+        import pickle
         from experiments import testar_parametros_paralelo_por_arquivo
+        print(call_args.tsp_queue)
         r = testar_parametros_paralelo_por_arquivo(list(glean_tsp_files(call_args.tsp_queue)))
-        pprint(r)
+        binary_file = open(call_args.tsp_queue[0] + '/my_pickled_results.bin', mode='wb')
+        pickle.dump(r, binary_file)
+        binary_file.close()
+        # r = pickle.loads(open('my_pickled_results.bin', mode='rb').read())
+        # pprint(r)
     else:
         for tsp_path in glean_tsp_files(call_args.tsp_queue):
             process_from_tsp_path(call_args, tsp_path)

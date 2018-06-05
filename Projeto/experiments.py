@@ -1,5 +1,6 @@
 from algorithms import sa
 import tqdm
+from pprint import pprint
 
 
 def gerar_parametros(tsp):
@@ -42,7 +43,7 @@ def testar_parametros_paralelo_por_arquivo(tsp_path_list):
     i = list()
     for r in tqdm.tqdm(pool.imap_unordered(run_sa, pram_grid_list), total=len(pram_grid_list)):
         i.append(r)
-        # print(r)
+        # pprint(r)
     pool.close()
     pool.join()
     return i
