@@ -53,7 +53,9 @@ aux_dict = {}
 
 
 def process_results(results_list):
-    results_list.sort(key=lambda tup: tup[0][1])
+    # from datetime import datetime
+
+    results_list.sort(key=lambda tup: (tup[0][1], tup[1]))
     for r in results_list:
         r = list(r)
         # pprint(r[2])
