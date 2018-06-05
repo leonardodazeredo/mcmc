@@ -53,8 +53,16 @@ def process_from_tsp_path(call_args, tsp_path):
             print("FURTHEST NEIGHBOR LENGTH: {}".format(calc_furthest_neighbor_tour(tsp)))
 
         if call_args.call_sa:
-            best_tour, current_tour = sa(tsp)
+            best_tour, tempo_total, tsp = sa(tsp)
             print("SA LENGTH:                {}".format(best_tour[1]))
+
+            # r = sa(tsp)
+            # import pickle
+            # binary_file = open('pr2392.bin', mode='wb')
+            # pickle.dump(r, binary_file)
+            # binary_file.close()
+            # import os
+            # os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (0.1, 440))
 
     print("")
     del(tsp)
