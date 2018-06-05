@@ -143,9 +143,9 @@ def _generate_random_neighbor(tsp, tour, method=INVERSE_SECTION):
     else:
         newTour = tour[:i] + tour[j:j + 1] + tour[i + 1:j] + tour[i:i + 1] + tour[j + 1:]
     assert len(tour) == len(newTour)
-    assert len(set(tour)) == len(tour) - 1
-    assert len(set(newTour)) == len(newTour) - 1
-    assert set(tour) == set(newTour)
+    # assert len(set(tour)) == len(tour) - 1
+    # assert len(set(newTour)) == len(newTour) - 1
+    # assert set(tour) == set(newTour)
     return newTour, tour_length(tsp, newTour)
 
 
@@ -159,7 +159,7 @@ def _generate_tour_at_0(tsp):
     return tour, tour_length(tsp, tour)
 
 
-def sa(tsp, T0=5, N=10, alpha=0.999, rate_func=exp_rate):
+def sa(tsp, T0=5, N=10, alpha=0.99, rate_func=exp_rate):
     best_tour = current_tour = _generate_tour_at_0(tsp)
 
     agenda_temp = rate_func(T0=T0, alpha=alpha)
