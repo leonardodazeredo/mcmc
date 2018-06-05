@@ -40,15 +40,6 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "-o"
-    "--print-opt",
-    action="store_true",
-    dest="need_opt_tours_printed",
-    default=False,
-    help="print explicit tours"
-)
-
-parser.add_argument(
     "-sa"
     "--simulated-annealing",
     action="store_true",

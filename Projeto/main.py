@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from argparser import parser
-from tspparse import read_tsp_file, read_tsp_tour_file
-from algorithms import calc_nearest_neighbor_tour, calc_in_order_tour, calc_furthest_neighbor_tour, calc_opt_tour, sa
+from tspparse import read_tsp_file
+from algorithms import calc_nearest_neighbor_tour, calc_in_order_tour, calc_furthest_neighbor_tour, sa
 
 from glob import iglob
 from os.path import isfile, isdir, join, exists
@@ -41,15 +41,8 @@ def process_from_tsp_path(call_args, tsp_path):
     print("DIMENSION:                {} points".format(tsp["DIMENSION"]))
 
     if call_args.call_all:
-        opt = read_tsp_tour_file(tsp_path.replace(".tsp", ".opt.tour"))["TOUR"]
-        print("OPT LENGTH:               {}".format(calc_opt_tour(tsp, tsp_path)))
-
         best_tour, length_b, current_tour, length_c = sa(tsp)
         print("SA LENGTH:                {}".format(length_b))
-
-        pprint(opt)
-        pprint(best_tour)
-        assert len(opt) == len(best_tour)
     else:
         if call_args.need_in_order:
             print("IN-ORDER TOUR LENGTH:     {}".format(calc_in_order_tour(tsp)))
