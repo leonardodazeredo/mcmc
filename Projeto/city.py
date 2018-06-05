@@ -52,13 +52,21 @@ def geo_distance(city1, city2):
 
         # distance formula originates from the TSPLIB 95 documentation
         distance = radius * acos(1 / 2 * ((1 + q1) * q2 - (1 - q1) * q3)) + 1
-        return(int(distance))# truncate (toward zero), as per TSPLIB 95
+        return(int(distance))  # truncate (toward zero), as per TSPLIB 95
+
+
+distance_map = {}
 
 
 def distance(city1, city2):
+    d = 0
     if type(city1) != type(city2):
         print("Can't calculate distance between cities: different coord types")
+    elif (city1, city2) in distance_map:
+        return distance_map[(city1, city2)]
     elif type(city1) == GeoCity:
-        return geo_distance(city1, city2)
+        d = geo_distance(city1, city2)
     elif type(city1) == Euc_2D:
-        return euc_2d_distance(city1, city2)
+        d = euc_2d_distance(city1, city2)
+    distance_map[(city1, city2)] = d
+    return d
