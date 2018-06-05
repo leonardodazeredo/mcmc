@@ -179,7 +179,7 @@ def sa(tsp, T0=5, N=10, alpha=0.999, rate_func=exp_rate):
                     bar.set_description("Best length so far: {}".format(best_tour[1]))
                     bar.refresh()
 
-        if best_tour[1] == 6859:
-            break
+        # if best_tour[1] == 6859:
+        #     break
 
     return best_tour, current_tour
