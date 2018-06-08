@@ -68,3 +68,11 @@ def process_results(results_list):
 
     for k, v in aux_dict.items():
         pprint(v[0])
+
+
+def process_one_result(r):
+    # from datetime import datetime
+    r = list(r)
+    r[2]["tsp"] = r[2]["tsp"]["NAME"]
+    r[0] = r[0][1]
+    print(r[0], r[2]["tsp"], r[1])
