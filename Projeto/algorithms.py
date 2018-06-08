@@ -96,15 +96,16 @@ def calc_furthest_neighbor_tour(tsp):
     return path_length(tsp, furthest_neighbor_tour(tsp))
 
 
-def linear_rate(T0=10, alpha=0.5):
+def linear_rate(T0, alpha):
     T = T0 = 10**T0
     temps = []
     t = 0
     while round(T, 6) > 0.0:
         T = T0 - (alpha * t)
         temps.append(T)
-        print(T)
+        # print(T)
         t += 1
+    # exit(0)
     return temps
 
 
@@ -162,7 +163,7 @@ def _generate_tour_at_0(tsp):
 from datetime import datetime
 
 
-def sa(tsp, T0=5, N=100, alpha=0.999, rate_func=exp_rate, verbose=True):
+def sa(tsp, T0=5, N=1, alpha=0.5, rate_func=linear_rate, verbose=True):
     inicio = datetime.now()
 
     best_tour = current_tour = _generate_tour_at_0(tsp)
@@ -176,6 +177,7 @@ def sa(tsp, T0=5, N=100, alpha=0.999, rate_func=exp_rate, verbose=True):
         bar = agenda_temp
 
     for temperature in bar:
+        # print(temperature)
         for i in range(N):
             new_tour = _generate_random_neighbor(tsp, current_tour)
 
@@ -184,9 +186,9 @@ def sa(tsp, T0=5, N=100, alpha=0.999, rate_func=exp_rate, verbose=True):
                 if best_tour[1] > current_tour[1]:
                     best_tour = deepcopy(current_tour)
 
-                    if verbose:
-                        bar.set_description("Best so far: {}".format(best_tour[1]))
-                        bar.refresh()
+                if verbose:
+                    bar.set_description("Best= {} / New= {}".format(best_tour[1], current_tour[1]))
+                    bar.refresh()
 
         # if best_tour[1] == 6859:
         #     break
