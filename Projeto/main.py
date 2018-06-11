@@ -21,6 +21,9 @@ def glean_tsp_files(path_arg_list):
         elif isfile(path_arg) & str(path_arg).endswith(".tsp"):
             yield path_arg
 
+        elif isfile(path_arg) & str(path_arg).endswith(".bin"):
+            yield path_arg
+
         elif isfile(path_arg) & (not path_arg.endswith(".tsp")):
             print("Can't open file ``{0}'': not a .tsp file".format(path_arg))
 
@@ -53,16 +56,16 @@ def process_from_tsp_path(call_args, tsp_path):
             print("FURTHEST NEIGHBOR LENGTH: {}".format(calc_furthest_neighbor_tour(tsp)))
 
         if call_args.call_sa:
-            # best_tour, tempo_total, tsp = sa(tsp)
-            # print("SA LENGTH:                {}".format(best_tour[1]))
+            best_tour, tempo_total, tsp = sa(tsp)
+            print("SA LENGTH:                {}".format(best_tour[1]))
 
-            r = sa(tsp)
-            import pickle
-            binary_file = open('pr1002.bin', mode='wb')
-            pickle.dump(r, binary_file)
-            binary_file.close()
-            import os
-            os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (0.1, 440))
+            # r = sa(tsp)
+            # import pickle
+            # binary_file = open('pcb442.bin', mode='wb')
+            # pickle.dump(r, binary_file)
+            # binary_file.close()
+            # import os
+            # os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (0.1, 440))
 
     print("")
     del(tsp)
@@ -83,10 +86,14 @@ def main():
         os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (0.1, 440))
 
     elif call_args.results:
-        from experiments import process_results
+        from experiments import process_results, process_one_result
         import pickle
-        r = pickle.loads(open(call_args.tsp_queue[0] + '/my_pickled_results.bin', mode='rb').read())
-        process_results(r)
+        # r = pickle.loads(open(call_args.tsp_queue[0] + '/my_pickled_results.bin', mode='rb').read())
+        for tsp_path in glean_tsp_files(call_args.tsp_queue):
+            # print(tsp_path)
+            r = pickle.loads(open(tsp_path, mode='rb').read())
+            process_one_result(r)
+
     else:
         for tsp_path in glean_tsp_files(call_args.tsp_queue):
             process_from_tsp_path(call_args, tsp_path)
